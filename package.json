@@ -20,7 +20,7 @@
     "happy-dom": "^12.10.0",
     "nuxt": "^3.8.0",
     "typescript": "^5.2.0",
-    "vitest": "^0.34.0"
+    "vitest": "^3.2.0"
   },
   "dependencies": {
     "@nordhealth/components": "^2.0.0"
