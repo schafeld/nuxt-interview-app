@@ -58,7 +58,7 @@
           &copy; 2025 VetSignup - Veterinary Product Registration
         </p>
         <p class="footer-note">
-          Built with <nord-icon name="interface-favorite" size="xs" aria-hidden="true"></nord-icon> &amp; NordHealth Design System by <a href="https://github.com/schafeld/nuxt-interview-app" title="Github repository" target="_blank">Oliver Schafeld <nord-icon name="generic-github" size="s" color="var(--n-color-text)" aria-hidden="true"></nord-icon></a>
+          Built with <nord-icon name="interface-favorite" size="xs" aria-hidden="true"></nord-icon> &amp; NordHealth Design System by <a href="https://github.com/schafeld/nuxt-interview-app" title="Github repository" target="_blank" class="author-link">Oliver Schafeld <nord-icon name="generic-github" size="s" class="github-icon" aria-hidden="true"></nord-icon></a>
         </p>
       </div>
     </nord-footer>
@@ -191,7 +191,7 @@ const signOut = () => {
 
 .footer-text {
   margin: 0;
-  font-size: var(--n-font-size-xl);
+  font-size: var(--n-font-size-s);
   color: var(--n-color-text-weaker);
 }
 
@@ -264,6 +264,21 @@ const signOut = () => {
   display: flex;
   flex-direction: column;
   gap: var(--n-space-xs);
+}
+
+.author-link {
+  color: var(--n-color-text-weaker);
+  text-decoration: none;
+  transition: text-decoration 0.2s ease;
+}
+
+.author-link:hover {
+  text-decoration: underline;
+}
+
+.github-icon {
+  color: var(--n-color-text-weak);
+  opacity: 0.6;
 }
 
 @media (max-width: 768px) {
