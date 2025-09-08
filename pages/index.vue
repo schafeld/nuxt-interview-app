@@ -2,17 +2,19 @@
 <template>
   <div class="signup-container">
     <nord-card class="signup-card">
-      <div class="card-header">
+      <header class="card-header">
         <nord-text variant="heading-l" class="card-title">
-          <nord-icon name="interface-love-heart-medical" size="m" class="title-icon"></nord-icon>
-          Sign Up for Our Veterinary Product
+          <h2 id="signup-title">
+            <nord-icon name="interface-love-heart-medical" size="m" class="title-icon" aria-hidden="true"></nord-icon>
+            Sign Up for Our Veterinary Product
+          </h2>
         </nord-text>
         <nord-text variant="body-m" color="weak" class="card-subtitle">
-          Join our platform to access professional veterinary tools and resources
+          <p>Join our platform to access professional veterinary tools and resources</p>
         </nord-text>
-      </div>
+      </header>
       
-      <form @submit.prevent="handleSubmit" class="signup-form">
+      <form @submit.prevent="handleSubmit" class="signup-form" aria-labelledby="signup-title" novalidate>
         <!-- Email Field -->
         <div class="form-field">
           <nord-input
@@ -24,9 +26,14 @@
             placeholder="Enter your email address"
             required
             class="email-input"
+            :aria-describedby="getFieldError('email') ? 'email-error' : undefined"
+            aria-invalid="getFieldError('email') ? 'true' : 'false'"
           >
-            <nord-icon slot="start" name="interface-email" size="s"></nord-icon>
+            <nord-icon slot="start" name="interface-email" size="s" aria-hidden="true"></nord-icon>
           </nord-input>
+          <div v-if="getFieldError('email')" id="email-error" class="error-message" role="alert">
+            {{ getFieldError('email') }}
+          </div>
         </div>
         
         <!-- Password Field -->
@@ -40,14 +47,18 @@
             placeholder="Enter a secure password"
             required
             class="password-input"
+            :aria-describedby="form.password ? 'password-requirements' : (getFieldError('password') ? 'password-error' : undefined)"
+            aria-invalid="getFieldError('password') ? 'true' : 'false'"
           >
-            <nord-icon slot="start" name="interface-lock" size="s"></nord-icon>
+            <nord-icon slot="start" name="interface-lock" size="s" aria-hidden="true"></nord-icon>
             <nord-button
               slot="end"
               variant="plain"
               size="s"
               @click="togglePasswordVisibility"
               type="button"
+              :aria-label="showPassword ? 'Hide password' : 'Show password'"
+              :aria-pressed="showPassword"
               class="password-toggle"
             >
               <nord-icon :name="showPassword ? 'interface-edit-on' : 'interface-edit-off'" size="s"></nord-icon>
@@ -57,52 +68,69 @@
         
         <!-- Password Requirements -->
         <div v-if="form.password" class="password-requirements">
-          <nord-banner variant="info" class="requirements-banner">
-            <div class="requirements-content">
+          <nord-banner variant="info" class="requirements-banner" role="region" aria-labelledby="password-requirements-title">
+            <div id="password-requirements" class="requirements-content">
               <nord-text variant="body-s" color="default" class="requirements-title">
-                <nord-icon name="interface-security-shield-check" size="s"></nord-icon>
-                Password Requirements:
+                <h3 id="password-requirements-title">
+                  <nord-icon name="interface-security-shield-check" size="s" aria-hidden="true"></nord-icon>
+                  Password Requirements:
+                </h3>
               </nord-text>
-              <ul class="requirements-list">
-                <li :class="{ valid: passwordChecks.length }">
+              <ul class="requirements-list" role="list">
+                <li :class="{ valid: passwordChecks.length }" role="listitem">
                   <nord-icon 
                     :name="passwordChecks.length ? 'interface-tick-circle' : 'interface-dot'" 
                     size="xs"
                     :class="passwordChecks.length ? 'icon-valid' : 'icon-pending'"
+                    :aria-label="passwordChecks.length ? 'Requirement met' : 'Requirement not met'"
                   ></nord-icon>
-                  At least {{ passwordConfig.minLength }} characters
+                  <span :aria-label="passwordChecks.length ? 'Requirement met: ' : 'Requirement not met: '">
+                    At least {{ passwordConfig.minLength }} characters
+                  </span>
                 </li>
-                <li :class="{ valid: passwordChecks.uppercase }">
+                <li :class="{ valid: passwordChecks.uppercase }" role="listitem">
                   <nord-icon 
                     :name="passwordChecks.uppercase ? 'interface-tick-circle' : 'interface-dot'" 
                     size="xs"
                     :class="passwordChecks.uppercase ? 'icon-valid' : 'icon-pending'"
+                    :aria-label="passwordChecks.uppercase ? 'Requirement met' : 'Requirement not met'"
                   ></nord-icon>
-                  At least one uppercase letter
+                  <span :aria-label="passwordChecks.uppercase ? 'Requirement met: ' : 'Requirement not met: '">
+                    At least one uppercase letter
+                  </span>
                 </li>
-                <li :class="{ valid: passwordChecks.lowercase }">
+                <li :class="{ valid: passwordChecks.lowercase }" role="listitem">
                   <nord-icon 
                     :name="passwordChecks.lowercase ? 'interface-tick-circle' : 'interface-dot'" 
                     size="xs"
                     :class="passwordChecks.lowercase ? 'icon-valid' : 'icon-pending'"
+                    :aria-label="passwordChecks.lowercase ? 'Requirement met' : 'Requirement not met'"
                   ></nord-icon>
-                  At least one lowercase letter
+                  <span :aria-label="passwordChecks.lowercase ? 'Requirement met: ' : 'Requirement not met: '">
+                    At least one lowercase letter
+                  </span>
                 </li>
-                <li :class="{ valid: passwordChecks.numbers }">
+                <li :class="{ valid: passwordChecks.numbers }" role="listitem">
                   <nord-icon 
                     :name="passwordChecks.numbers ? 'interface-tick-circle' : 'interface-dot'" 
                     size="xs"
                     :class="passwordChecks.numbers ? 'icon-valid' : 'icon-pending'"
+                    :aria-label="passwordChecks.numbers ? 'Requirement met' : 'Requirement not met'"
                   ></nord-icon>
-                  At least one number
+                  <span :aria-label="passwordChecks.numbers ? 'Requirement met: ' : 'Requirement not met: '">
+                    At least one number
+                  </span>
                 </li>
-                <li :class="{ valid: passwordChecks.specialChars }">
+                <li :class="{ valid: passwordChecks.specialChars }" role="listitem">
                   <nord-icon 
                     :name="passwordChecks.specialChars ? 'interface-tick-circle' : 'interface-dot'" 
                     size="xs"
                     :class="passwordChecks.specialChars ? 'icon-valid' : 'icon-pending'"
+                    :aria-label="passwordChecks.specialChars ? 'Requirement met' : 'Requirement not met'"
                   ></nord-icon>
-                  At least {{ passwordConfig.minSpecialChars }} special characters
+                  <span :aria-label="passwordChecks.specialChars ? 'Requirement met: ' : 'Requirement not met: '">
+                    At least {{ passwordConfig.minSpecialChars }} special characters
+                  </span>
                 </li>
               </ul>
             </div>
@@ -110,22 +138,27 @@
         </div>
         
         <!-- Updates Checkbox -->
-        <div class="form-field">
+        <fieldset class="form-field">
           <nord-checkbox
             :checked="form.receiveUpdates"
             @change="updateReceiveUpdates"
             label="I would like to receive occasional product updates and announcements"
             class="updates-checkbox"
+            aria-describedby="updates-description"
           >
-            <nord-icon name="interface-email-action-send" size="s" slot="icon"></nord-icon>
+            <nord-icon name="interface-email-action-send" size="s" slot="icon" aria-hidden="true"></nord-icon>
           </nord-checkbox>
-        </div>
+          <div id="updates-description" class="visually-hidden">
+            Optional: Check this box to receive product updates and announcements via email
+          </div>
+        </fieldset>
         
         <!-- Submit Button -->
         <nord-button
           type="submit"
           :disabled="!isFormValid || isSubmitting"
           :loading="isSubmitting"
+          :aria-describedby="!isFormValid ? 'form-validation-status' : undefined"
           size="l"
           class="submit-button"
         >
@@ -435,6 +468,12 @@ const handleSubmit = async () => {
   color: var(--n-color-status-danger);
 }
 
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
 @media (max-width: 768px) {
   .signup-container {
     padding: var(--n-space-s);
@@ -465,5 +504,30 @@ const handleSubmit = async () => {
   .card-subtitle {
     font-size: var(--n-font-size-s);
   }
+}
+
+/* Accessibility helpers */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.error-message {
+  font-size: var(--n-font-size-s);
+  color: var(--n-color-status-danger);
+  margin-top: var(--n-space-xs);
+}
+
+/* Focus styles for better accessibility */
+.password-toggle:focus-visible {
+  outline: 2px solid var(--n-color-border-focus);
+  outline-offset: 2px;
 }
 </style>

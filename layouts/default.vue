@@ -1,52 +1,64 @@
 <!-- layouts/default.vue -->
 <template>
   <div class="app-layout">
+    <!-- Skip Link for Accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
     <!-- Nord Header -->
-    <nord-header class="app-header">
+    <nord-header class="app-header" role="banner">
       <div class="header-content">
         <div class="header-left">
-          <nord-icon name="medical-heart-rate" size="l" class="app-logo"></nord-icon>
-          <nord-text variant="heading-m" class="app-title">VetSignup</nord-text>
+          <nord-icon name="medical-heart-rate" size="l" class="app-logo" aria-hidden="true"></nord-icon>
+          <nord-text variant="heading-m" class="app-title">
+            <h1>VetSignup</h1>
+          </nord-text>
         </div>
         
-        <div class="header-right" v-if="isSignedIn">
+        <nav class="header-right" v-if="isSignedIn" aria-label="User navigation">
           <nord-dropdown>
-            <nord-button slot="toggle" variant="plain" class="profile-button">
-              <nord-avatar size="s" name="User Profile" class="profile-avatar">
-                <nord-icon name="user-single" size="s"></nord-icon>
+            <nord-button 
+              slot="toggle" 
+              variant="plain" 
+              class="profile-button"
+              :aria-label="`User menu for ${userEmail}`"
+              aria-haspopup="menu"
+              aria-expanded="false"
+            >
+              <nord-avatar size="s" :name="`Profile picture for ${userEmail}`" class="profile-avatar">
+                <nord-icon name="user-single" size="s" aria-hidden="true"></nord-icon>
               </nord-avatar>
               <span class="profile-email">{{ userEmail }}</span>
-              <nord-icon name="arrow-down" size="s" class="dropdown-arrow"></nord-icon>
+              <nord-icon name="arrow-down" size="s" class="dropdown-arrow" aria-hidden="true"></nord-icon>
             </nord-button>
             
-            <nord-dropdown-group>
-              <nord-dropdown-item @click="navigateToProfile">
-                <nord-icon name="user-single" size="s"></nord-icon>
+            <nord-dropdown-group role="menu">
+              <nord-dropdown-item @click="navigateToProfile" role="menuitem">
+                <nord-icon name="user-single" size="s" aria-hidden="true"></nord-icon>
                 View Profile
               </nord-dropdown-item>
-              <nord-dropdown-item @click="signOut" variant="destructive">
-                <nord-icon name="interface-logout" size="s"></nord-icon>
+              <nord-dropdown-item @click="signOut" variant="destructive" role="menuitem">
+                <nord-icon name="interface-logout" size="s" aria-hidden="true"></nord-icon>
                 Sign Out
               </nord-dropdown-item>
             </nord-dropdown-group>
           </nord-dropdown>
-        </div>
+        </nav>
       </div>
     </nord-header>
     
     <!-- Main Content -->
-    <main class="app-main">
+    <main id="main-content" class="app-main" role="main">
       <slot />
     </main>
     
     <!-- Nord Footer -->
-    <nord-footer class="app-footer">
+    <nord-footer class="app-footer" role="contentinfo">
       <div class="footer-content">
         <nord-text variant="body-s" color="weak">
           &copy; 2025 VetSignup - Veterinary Product Registration
         </nord-text>
         <nord-text variant="caption" color="weak" class="footer-note">
-          <nord-icon name="interface-love-heart" size="xs"></nord-icon>
+          <nord-icon name="interface-love-heart" size="xs" aria-hidden="true"></nord-icon>
           Built with NordHealth Design System by Oliver Schafeld
         </nord-text>
       </div>
@@ -104,6 +116,25 @@ const signOut = () => {
 </script>
 
 <style scoped>
+/* Skip link for accessibility */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: var(--n-color-surface);
+  color: var(--n-color-text);
+  padding: var(--n-space-s);
+  text-decoration: none;
+  border-radius: var(--n-border-radius);
+  z-index: 1000;
+  font-weight: var(--n-font-weight-active);
+  border: 2px solid var(--n-color-border-focus);
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
 .app-layout {
   min-height: 100vh;
   display: flex;

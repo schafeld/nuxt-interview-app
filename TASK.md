@@ -23,6 +23,7 @@ The web app must also fulfill the following stylistic and general requirememnts 
 - Password complexity (and the corresponding validation) should be high, required, and configurable in a config file.
 - The NordHealth Veterinary design system must be used for the app (https://nordhealth.design/).
 - Use route guards for the password-protected page views of the app.
+- The app must be accessible.
 
 Write a Claude.md text according to these specifications to be used inside the project and prescribe where that file goes inside the project.
 Write a README.md documentation describing the setup and the functionality of the app.
