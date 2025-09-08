@@ -176,6 +176,7 @@ The application uses the NordHealth Design System VET theme:
 4. Maintain accessibility standards
 5. Update documentation for changes
 
-License
+**License
+
 created by Oliver Schafeld <info@schafeld.com> 2025,
 CC, attribution required.
