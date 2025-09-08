@@ -1,30 +1,32 @@
 # Veterinary Signup Application
 
-A modern, client-side rendered Nuxt 3 application for veterinary product signups, built with the NordHealth Design System VET theme.
+A modern, professional client-side rendered Nuxt 3 application for veterinary product signups, built with the comprehensive NordHealth Design System VET theme and NordIcons.
 
 ## Features
 
 - ✅ Client-side only rendering (SPA mode)
 - ✅ TypeScript throughout the application
-- ✅ NordHealth Design System VET theme integration
+- ✅ Professional NordHealth Design System VET theme integration
+- ✅ Comprehensive NordIcons integration for intuitive UI
+- ✅ Modern layout with header, footer, dropdown navigation, and avatar profile
 - ✅ Comprehensive form validation with configurable password complexity
-- ✅ Password visibility toggle
-- ✅ User profile page with avatar navigation
+- ✅ Password visibility toggle with icons
+- ✅ Professional user profile page with detailed information cards
 - ✅ Route guards for protected pages
 - ✅ Unit tests with Vitest
 - ✅ End-to-end testing with Playwright
-- ✅ Responsive design with header/footer layout
-- ✅ Accessible components
-- ✅ Session-based authentication simulation
+- ✅ Fully responsive design with gradient backgrounds
+- ✅ Accessible components with proper ARIA labels
+- ✅ Session-based authentication simulation with sign-out functionality
 - ✅ LocalStorage persistence for user preferences
 
 ## Tech Stack
 
 - **Framework**: Nuxt 3 (SPA mode)
 - **Language**: TypeScript
-- **UI Components**: NordHealth Design System
+- **UI Components**: NordHealth Design System + NordIcons
 - **Testing**: Vitest (unit) + Playwright (e2e)
-- **Styling**: CSS with NordHealth theme variables
+- **Styling**: CSS with NordHealth theme variables and professional layouts
 
 ## Installation
 

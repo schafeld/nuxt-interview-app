@@ -7,8 +7,17 @@ export default defineNuxtConfig({
     strict: true,
     typeCheck: false
   },
-  css: ['@nordhealth/css', '@nordhealth/themes/lib/vet.css'],
+  css: [
+    '@nordhealth/css', 
+    '@nordhealth/themes/lib/vet.css',
+    '@nordhealth/icons'
+  ],
   plugins: ['~/plugins/nordhealth.client.ts'],
+  vue: {
+    compilerOptions: {
+      isCustomElement: (tag) => tag.startsWith('nord-')
+    }
+  },
   runtimeConfig: {
     public: {
       passwordConfig: {

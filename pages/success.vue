@@ -3,40 +3,75 @@
   <div class="success-container">
     <nord-card class="success-card">
       <div class="success-content">
-        <nord-icon name="interface-validation" size="xl" class="success-icon"></nord-icon>
-        
-        <h1>Welcome to Our Veterinary Community!</h1>
-        
-        <p class="success-message">
-          Thank you for signing up! Your account has been successfully created.
-        </p>
+        <div class="success-header">
+          <nord-icon name="interface-tick-circle" size="xl" class="success-icon"></nord-icon>
+          <nord-text variant="heading-l" class="success-title">
+            Welcome to Our Veterinary Community!
+          </nord-text>
+          <nord-text variant="body-l" color="weak" class="success-subtitle">
+            Thank you for signing up! Your account has been successfully created.
+          </nord-text>
+        </div>
         
         <div v-if="signupData" class="signup-details">
-          <nord-banner variant="success">
-            <h3>Account Details:</h3>
-            <p><strong>Email:</strong> {{ signupData.email }}</p>
-            <p><strong>Product Updates:</strong> 
-              {{ signupData.receiveUpdates ? 'Yes, you will receive updates' : 'No updates requested' }}
-            </p>
-            <p><strong>Signed up:</strong> {{ formatDate(signupData.timestamp) }}</p>
+          <nord-banner variant="success" class="details-banner">
+            <div class="banner-content">
+              <nord-text variant="heading-s" class="banner-title">
+                <nord-icon name="interface-security-shield-check" size="s"></nord-icon>
+                Account Details
+              </nord-text>
+              <div class="detail-row">
+                <nord-icon name="interface-email" size="s" class="detail-icon"></nord-icon>
+                <nord-text variant="body-m">
+                  <strong>Email:</strong> {{ signupData.email }}
+                </nord-text>
+              </div>
+              <div class="detail-row">
+                <nord-icon name="interface-email-action-send" size="s" class="detail-icon"></nord-icon>
+                <nord-text variant="body-m">
+                  <strong>Updates:</strong> 
+                  {{ signupData.receiveUpdates ? 'Yes, you will receive updates' : 'No updates requested' }}
+                </nord-text>
+              </div>
+              <div class="detail-row">
+                <nord-icon name="interface-time" size="s" class="detail-icon"></nord-icon>
+                <nord-text variant="body-m">
+                  <strong>Created:</strong> {{ formatDate(signupData.timestamp) }}
+                </nord-text>
+              </div>
+            </div>
           </nord-banner>
         </div>
         
         <div class="next-steps">
-          <h3>What's Next?</h3>
-          <ul>
-            <li>Check your email for a confirmation message</li>
-            <li>Complete your profile setup</li>
-            <li>Explore our veterinary tools and resources</li>
+          <nord-text variant="heading-s" class="steps-title">
+            <nord-icon name="interface-list-check" size="s"></nord-icon>
+            What's Next?
+          </nord-text>
+          <ul class="steps-list">
+            <li class="step-item">
+              <nord-icon name="interface-email" size="s" class="step-icon"></nord-icon>
+              <nord-text variant="body-m">Check your email for a confirmation message</nord-text>
+            </li>
+            <li class="step-item">
+              <nord-icon name="interface-user-single" size="s" class="step-icon"></nord-icon>
+              <nord-text variant="body-m">Complete your profile setup</nord-text>
+            </li>
+            <li class="step-item">
+              <nord-icon name="interface-love-heart-medical" size="s" class="step-icon"></nord-icon>
+              <nord-text variant="body-m">Explore our veterinary tools and resources</nord-text>
+            </li>
           </ul>
         </div>
         
         <div class="action-buttons">
-          <nord-button @click="startOver" variant="secondary">
+          <nord-button @click="startOver" variant="secondary" size="l">
+            <nord-icon name="interface-user-add" size="s" slot="start"></nord-icon>
             Sign Up Another Account
           </nord-button>
-          <nord-button @click="goToDashboard">
-            Continue to Dashboard
+          <nord-button @click="goToDashboard" size="l">
+            <nord-icon name="interface-arrow-right" size="s" slot="end"></nord-icon>
+            Continue to Profile
           </nord-button>
         </div>
       </div>
@@ -78,8 +113,7 @@ const startOver = () => {
 }
 
 const goToDashboard = () => {
-  // In a real app, this would navigate to the main dashboard
-  alert('Dashboard functionality would be implemented here!')
+  navigateTo('/profile')
 }
 </script>
 
@@ -89,60 +123,185 @@ const goToDashboard = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
-  background-color: var(--n-color-surface-raised);
+  padding: var(--n-space-m);
+  background: linear-gradient(135deg, var(--n-color-surface-raised) 0%, var(--n-color-surface) 100%);
 }
 
 .success-card {
   width: 100%;
-  max-width: 600px;
+  max-width: 650px;
+  box-shadow: var(--n-box-shadow-l);
 }
 
 .success-content {
+  padding: var(--n-space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--n-space-l);
+}
+
+.success-header {
   text-align: center;
-  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--n-space-m);
+  padding-bottom: var(--n-space-l);
+  border-bottom: 1px solid var(--n-color-border);
 }
 
 .success-icon {
   color: var(--n-color-status-success);
-  margin-bottom: 1rem;
+  margin: 0 auto;
 }
 
-.success-message {
-  font-size: 1.125rem;
-  margin-bottom: 2rem;
+.success-title {
+  margin: 0;
   color: var(--n-color-text);
 }
 
+.success-subtitle {
+  margin: 0;
+  line-height: 1.5;
+}
+
 .signup-details {
-  margin: 2rem 0;
-  text-align: left;
+  width: 100%;
+}
+
+.details-banner {
+  background: var(--n-color-status-success-background);
+  border-color: var(--n-color-status-success);
+}
+
+.banner-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--n-space-s);
+}
+
+.banner-title {
+  display: flex;
+  align-items: center;
+  gap: var(--n-space-xs);
+  margin-bottom: var(--n-space-s);
+  color: var(--n-color-status-success);
+}
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  gap: var(--n-space-s);
+  padding: var(--n-space-xs) 0;
+}
+
+.detail-icon {
+  color: var(--n-color-status-success);
+  flex-shrink: 0;
 }
 
 .next-steps {
-  margin: 2rem 0;
-  text-align: left;
+  width: 100%;
 }
 
-.next-steps ul {
-  padding-left: 1.5rem;
+.steps-title {
+  display: flex;
+  align-items: center;
+  gap: var(--n-space-xs);
+  margin-bottom: var(--n-space-m);
+  color: var(--n-color-text);
 }
 
-.next-steps li {
-  margin-bottom: 0.5rem;
+.steps-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--n-space-s);
+}
+
+.step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--n-space-s);
+  padding: var(--n-space-s);
+  background: var(--n-color-surface-raised);
+  border-radius: var(--n-border-radius);
+  border: 1px solid var(--n-color-border);
+  transition: all 0.2s ease;
+}
+
+.step-item:hover {
+  border-color: var(--n-color-accent);
+  box-shadow: var(--n-box-shadow-s);
+}
+
+.step-icon {
+  color: var(--n-color-accent);
+  margin-top: 2px;
+  flex-shrink: 0;
 }
 
 .action-buttons {
   display: flex;
-  gap: 1rem;
+  gap: var(--n-space-m);
   justify-content: center;
   flex-wrap: wrap;
-  margin-top: 2rem;
+  padding-top: var(--n-space-l);
+  border-top: 1px solid var(--n-color-border);
 }
 
-@media (max-width: 640px) {
+.action-buttons nord-button {
+  flex: 1;
+  min-width: 200px;
+}
+
+@media (max-width: 768px) {
+  .success-container {
+    padding: var(--n-space-s);
+    align-items: flex-start;
+    padding-top: var(--n-space-l);
+  }
+  
+  .success-content {
+    padding: var(--n-space-l);
+  }
+  
   .action-buttons {
     flex-direction: column;
+  }
+  
+  .action-buttons nord-button {
+    width: 100%;
+  }
+  
+  .detail-row,
+  .step-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--n-space-xs);
+  }
+  
+  .step-item {
+    padding: var(--n-space-s) var(--n-space-m);
+  }
+}
+
+@media (max-width: 480px) {
+  .success-header {
+    gap: var(--n-space-s);
+  }
+  
+  .banner-title,
+  .steps-title {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--n-space-xs);
+  }
+  
+  .detail-row {
+    align-items: center;
+    text-align: center;
   }
 }
 </style>

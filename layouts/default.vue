@@ -1,38 +1,56 @@
 <!-- layouts/default.vue -->
 <template>
   <div class="app-layout">
-    <header class="app-header">
+    <!-- Nord Header -->
+    <nord-header class="app-header">
       <div class="header-content">
         <div class="header-left">
-          <nord-icon name="interface-medical" size="m" class="app-logo"></nord-icon>
-          <h2 class="app-title">VetSignup</h2>
+          <nord-icon name="interface-love-heart-medical" size="l" class="app-logo"></nord-icon>
+          <nord-text variant="heading-m" class="app-title">VetSignup</nord-text>
         </div>
         
-        <nav class="header-nav" v-if="isSignedIn">
-          <nord-button 
-            @click="navigateToProfile"
-            variant="plain"
-            size="s"
-            class="profile-button"
-            :title="userEmail ? `Profile for ${userEmail}` : 'Profile'"
-          >
-            <nord-icon name="interface-user-single" size="s" class="profile-icon"></nord-icon>
-            <span class="profile-text">Profile</span>
-          </nord-button>
-        </nav>
+        <div class="header-right" v-if="isSignedIn">
+          <nord-dropdown>
+            <nord-button slot="toggle" variant="plain" class="profile-button">
+              <nord-avatar size="s" name="User Profile" class="profile-avatar">
+                <nord-icon name="interface-user-single" size="s"></nord-icon>
+              </nord-avatar>
+              <span class="profile-email">{{ userEmail }}</span>
+              <nord-icon name="arrow-down" size="s" class="dropdown-arrow"></nord-icon>
+            </nord-button>
+            
+            <nord-dropdown-group>
+              <nord-dropdown-item @click="navigateToProfile">
+                <nord-icon name="interface-user-single" size="s"></nord-icon>
+                View Profile
+              </nord-dropdown-item>
+              <nord-dropdown-item @click="signOut" variant="destructive">
+                <nord-icon name="interface-logout" size="s"></nord-icon>
+                Sign Out
+              </nord-dropdown-item>
+            </nord-dropdown-group>
+          </nord-dropdown>
+        </div>
       </div>
-    </header>
+    </nord-header>
     
+    <!-- Main Content -->
     <main class="app-main">
       <slot />
     </main>
     
-    <footer class="app-footer">
+    <!-- Nord Footer -->
+    <nord-footer class="app-footer">
       <div class="footer-content">
-        <p>&copy; 2025 VetSignup - Veterinary Product Registration</p>
-        <p class="footer-note">Built with NordHealth Design System</p>
+        <nord-text variant="body-s" color="weak">
+          &copy; 2025 VetSignup - Veterinary Product Registration
+        </nord-text>
+        <nord-text variant="caption" color="weak" class="footer-note">
+          <nord-icon name="interface-love-heart" size="xs"></nord-icon>
+          Built with NordHealth Design System by Oliver Schafeld
+        </nord-text>
       </div>
-    </footer>
+    </nord-footer>
   </div>
 </template>
 
@@ -73,6 +91,16 @@ const checkSigninStatus = () => {
 const navigateToProfile = () => {
   navigateTo('/profile')
 }
+
+const signOut = () => {
+  if (process.client) {
+    sessionStorage.removeItem('signupCompleted')
+    sessionStorage.removeItem('signupData')
+    isSignedIn.value = false
+    userEmail.value = ''
+    navigateTo('/')
+  }
+}
 </script>
 
 <style scoped>
@@ -84,114 +112,113 @@ const navigateToProfile = () => {
 }
 
 .app-header {
-  background-color: var(--n-color-surface-raised);
   border-bottom: 1px solid var(--n-color-border);
-  padding: 1rem 0;
   position: sticky;
   top: 0;
   z-index: 100;
+  background: var(--n-color-surface-raised);
 }
 
 .header-content {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: var(--n-space-m);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--n-space-s);
 }
 
 .app-logo {
-  color: var(--n-color-text);
+  color: var(--n-color-status-info);
 }
 
 .app-title {
   color: var(--n-color-text);
   margin: 0;
-  font-size: 1.5rem;
-  font-weight: 600;
 }
 
-.header-nav {
+.header-right {
   display: flex;
   align-items: center;
-  gap: 1rem;
 }
 
 .profile-button {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  border-radius: 4px;
-  padding: 0.5rem 1rem;
-  transition: background-color 0.2s;
+  gap: var(--n-space-xs);
+  padding: var(--n-space-xs) var(--n-space-s);
 }
 
-.profile-button:hover {
-  background-color: var(--n-color-surface);
+.profile-avatar {
+  border: 2px solid var(--n-color-border);
 }
 
-.profile-icon {
+.profile-email {
   color: var(--n-color-text);
+  font-size: var(--n-font-size-s);
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.profile-text {
-  color: var(--n-color-text);
-  font-weight: 500;
+.dropdown-arrow {
+  color: var(--n-color-text-weak);
+  transition: transform 0.2s ease;
+}
+
+.profile-button[aria-expanded="true"] .dropdown-arrow {
+  transform: rotate(180deg);
 }
 
 .app-main {
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-height: 0; /* Allows flex children to shrink */
 }
 
 .app-footer {
-  background-color: var(--n-color-surface-raised);
-  border-top: 1px solid var(--n-color-border);
-  padding: 1.5rem 0;
   margin-top: auto;
+  border-top: 1px solid var(--n-color-border);
+  background: var(--n-color-surface-raised);
 }
 
 .footer-content {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: var(--n-space-m);
   text-align: center;
-}
-
-.footer-content p {
-  margin: 0.25rem 0;
-  color: var(--n-color-text-weak);
-  font-size: 0.875rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--n-space-xs);
 }
 
 .footer-note {
-  font-size: 0.75rem;
-  opacity: 0.8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--n-space-xs);
 }
 
 @media (max-width: 768px) {
   .header-content {
-    padding: 0 0.5rem;
+    padding: var(--n-space-s);
   }
   
-  .app-title {
-    font-size: 1.25rem;
-  }
-  
-  .profile-text {
+  .profile-email {
     display: none;
   }
   
   .profile-button {
-    padding: 0.5rem;
+    padding: var(--n-space-xs);
   }
 }
 </style>

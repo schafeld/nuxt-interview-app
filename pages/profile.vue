@@ -2,66 +2,128 @@
 <template>
   <div class="profile-container">
     <nord-card class="profile-card">
-      <h1 slot="header">User Profile</h1>
+      <div class="profile-header">
+        <div class="header-content">
+          <nord-avatar size="l" name="User Avatar" class="profile-avatar">
+            <nord-icon name="interface-user-single" size="m"></nord-icon>
+          </nord-avatar>
+          <div class="header-text">
+            <nord-text variant="heading-l" class="profile-title">User Profile</nord-text>
+            <nord-text variant="body-m" color="weak" class="profile-subtitle">
+              Manage your account settings and preferences
+            </nord-text>
+          </div>
+        </div>
+      </div>
       
       <div v-if="userData" class="profile-content">
         <div class="profile-section">
-          <nord-banner variant="info">
-            <h3>Account Information</h3>
-            <div class="profile-details">
-              <p><strong>Email:</strong> {{ userData.email }}</p>
-              <p><strong>Account Created:</strong> {{ formatDate(userData.timestamp) }}</p>
-              <p><strong>Product Updates:</strong> 
-                <nord-badge :variant="userData.receiveUpdates ? 'success' : 'neutral'">
-                  {{ userData.receiveUpdates ? 'Enabled' : 'Disabled' }}
-                </nord-badge>
-              </p>
+          <nord-banner variant="info" class="info-banner">
+            <div class="banner-content">
+              <nord-text variant="heading-s" class="section-title">
+                <nord-icon name="interface-security-shield-check" size="s"></nord-icon>
+                Account Information
+              </nord-text>
+              <div class="profile-details">
+                <div class="detail-row">
+                  <nord-icon name="interface-email" size="s" class="detail-icon"></nord-icon>
+                  <div class="detail-content">
+                    <nord-text variant="caption" color="weak">Email Address</nord-text>
+                    <nord-text variant="body-m">{{ userData.email }}</nord-text>
+                  </div>
+                </div>
+                <div class="detail-row">
+                  <nord-icon name="interface-time" size="s" class="detail-icon"></nord-icon>
+                  <div class="detail-content">
+                    <nord-text variant="caption" color="weak">Account Created</nord-text>
+                    <nord-text variant="body-m">{{ formatDate(userData.timestamp) }}</nord-text>
+                  </div>
+                </div>
+                <div class="detail-row">
+                  <nord-icon name="interface-email-action-send" size="s" class="detail-icon"></nord-icon>
+                  <div class="detail-content">
+                    <nord-text variant="caption" color="weak">Product Updates</nord-text>
+                    <nord-badge :variant="userData.receiveUpdates ? 'success' : 'neutral'">
+                      <nord-icon 
+                        :name="userData.receiveUpdates ? 'interface-tick-circle' : 'interface-remove-circle'" 
+                        size="xs"
+                      ></nord-icon>
+                      {{ userData.receiveUpdates ? 'Enabled' : 'Disabled' }}
+                    </nord-badge>
+                  </div>
+                </div>
+              </div>
             </div>
           </nord-banner>
         </div>
 
         <div class="profile-section">
-          <h3>Update Preferences</h3>
-          <form @submit.prevent="updatePreferences" class="preferences-form">
-            <nord-checkbox
-              :checked="form.receiveUpdates"
-              @change="updateReceiveUpdates"
-              label="Receive product updates and announcements"
-            />
-            
-            <div class="form-actions">
-              <nord-button type="submit" :disabled="isUpdating">
-                {{ isUpdating ? 'Updating...' : 'Update Preferences' }}
-              </nord-button>
-            </div>
-          </form>
+          <nord-text variant="heading-s" class="section-title">
+            <nord-icon name="interface-settings" size="s"></nord-icon>
+            Update Preferences
+          </nord-text>
+          <nord-card class="preferences-card">
+            <form @submit.prevent="updatePreferences" class="preferences-form">
+              <nord-checkbox
+                :checked="form.receiveUpdates"
+                @change="updateReceiveUpdates"
+                label="Receive product updates and announcements"
+                class="preference-checkbox"
+              >
+                <nord-icon name="interface-email-action-send" size="s" slot="icon"></nord-icon>
+              </nord-checkbox>
+              
+              <div class="form-actions">
+                <nord-button type="submit" :disabled="isUpdating" :loading="isUpdating" size="l">
+                  <nord-icon name="interface-save" size="s" slot="start"></nord-icon>
+                  {{ isUpdating ? 'Updating...' : 'Update Preferences' }}
+                </nord-button>
+              </div>
+            </form>
+          </nord-card>
         </div>
 
         <div class="profile-section">
-          <h3>Account Actions</h3>
-          <div class="account-actions">
-            <nord-button @click="signOut" variant="secondary">
-              Sign Out
-            </nord-button>
-            <nord-button @click="clearData" variant="danger">
-              Clear Account Data
-            </nord-button>
-          </div>
+          <nord-text variant="heading-s" class="section-title">
+            <nord-icon name="interface-security-shield" size="s"></nord-icon>
+            Account Actions
+          </nord-text>
+          <nord-card class="actions-card">
+            <div class="account-actions">
+              <nord-button @click="signOut" variant="secondary" size="l" class="action-button">
+                <nord-icon name="interface-logout" size="s" slot="start"></nord-icon>
+                Sign Out
+              </nord-button>
+              <nord-button @click="clearData" variant="danger" size="l" class="action-button">
+                <nord-icon name="interface-delete" size="s" slot="start"></nord-icon>
+                Clear Account Data
+              </nord-button>
+            </div>
+          </nord-card>
         </div>
 
         <!-- Success message -->
         <div v-if="updateMessage" class="update-message">
-          <nord-banner variant="success">
+          <nord-banner variant="success" class="success-banner">
+            <nord-icon name="interface-tick-circle" size="s"></nord-icon>
             {{ updateMessage }}
           </nord-banner>
         </div>
       </div>
 
       <div v-else class="no-data">
-        <nord-banner variant="warning">
-          <h3>No Profile Data Found</h3>
-          <p>It looks like you haven't signed up yet or your session has expired.</p>
-          <nord-button @click="goToSignup">
+        <nord-banner variant="warning" class="warning-banner">
+          <div class="banner-content">
+            <nord-icon name="interface-alert-triangle" size="m" class="warning-icon"></nord-icon>
+            <div class="warning-text">
+              <nord-text variant="heading-s">No Profile Data Found</nord-text>
+              <nord-text variant="body-m" color="weak">
+                It looks like you haven't signed up yet or your session has expired.
+              </nord-text>
+            </div>
+          </div>
+          <nord-button @click="goToSignup" size="l" class="signup-button">
+            <nord-icon name="interface-user-add" size="s" slot="start"></nord-icon>
             Go to Signup
           </nord-button>
         </nord-banner>
@@ -171,69 +233,243 @@ const goToSignup = () => {
 <style scoped>
 .profile-container {
   min-height: 100vh;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 2rem 1rem;
-  background-color: var(--n-color-surface-raised);
+  padding: var(--n-space-l);
+  background: linear-gradient(135deg, var(--n-color-surface-raised) 0%, var(--n-color-surface) 100%);
 }
 
 .profile-card {
-  width: 100%;
-  max-width: 700px;
+  max-width: 800px;
+  margin: 0 auto;
+  box-shadow: var(--n-box-shadow-l);
+}
+
+.profile-header {
+  padding: var(--n-space-xl);
+  background: var(--n-color-surface-raised);
+  border-bottom: 1px solid var(--n-color-border);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: var(--n-space-l);
+}
+
+.profile-avatar {
+  background: var(--n-color-accent);
+  color: var(--n-color-text-on-accent);
+  border: 3px solid var(--n-color-border);
+}
+
+.header-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--n-space-xs);
+}
+
+.profile-title {
+  margin: 0;
+  color: var(--n-color-text);
+}
+
+.profile-subtitle {
+  margin: 0;
+  line-height: 1.5;
 }
 
 .profile-content {
+  padding: var(--n-space-xl);
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: var(--n-space-xl);
 }
 
 .profile-section {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--n-space-m);
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--n-space-xs);
+  color: var(--n-color-text);
+  margin-bottom: var(--n-space-s);
+}
+
+.info-banner {
+  background: var(--n-color-status-info-background);
+  border-color: var(--n-color-status-info);
+}
+
+.banner-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--n-space-m);
 }
 
 .profile-details {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  margin-top: 1rem;
+  gap: var(--n-space-s);
+}
+
+.detail-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--n-space-s);
+  padding: var(--n-space-s);
+  background: var(--n-color-surface);
+  border-radius: var(--n-border-radius);
+  border: 1px solid var(--n-color-border);
+}
+
+.detail-icon {
+  color: var(--n-color-status-info);
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.detail-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--n-space-xs);
+  flex: 1;
+}
+
+.preferences-card,
+.actions-card {
+  border: 1px solid var(--n-color-border);
+  background: var(--n-color-surface-raised);
 }
 
 .preferences-form {
+  padding: var(--n-space-l);
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: var(--n-space-l);
+}
+
+.preference-checkbox {
+  padding: var(--n-space-s);
+  background: var(--n-color-surface);
+  border-radius: var(--n-border-radius);
+  border: 1px solid var(--n-color-border);
 }
 
 .form-actions {
   display: flex;
-  justify-content: flex-start;
+  justify-content: flex-end;
 }
 
 .account-actions {
+  padding: var(--n-space-l);
   display: flex;
-  gap: 1rem;
+  gap: var(--n-space-m);
   flex-wrap: wrap;
 }
 
+.action-button {
+  flex: 1;
+  min-width: 200px;
+}
+
 .update-message {
-  margin-top: 1rem;
+  position: fixed;
+  top: var(--n-space-l);
+  right: var(--n-space-l);
+  z-index: 1000;
+  max-width: 400px;
+}
+
+.success-banner {
+  background: var(--n-color-status-success-background);
+  border-color: var(--n-color-status-success);
+  display: flex;
+  align-items: center;
+  gap: var(--n-space-s);
 }
 
 .no-data {
+  padding: var(--n-space-xl);
+}
+
+.warning-banner {
+  background: var(--n-color-status-warning-background);
+  border-color: var(--n-color-status-warning);
+  display: flex;
+  flex-direction: column;
+  gap: var(--n-space-l);
   text-align: center;
+}
+
+.warning-icon {
+  color: var(--n-color-status-warning);
+  margin: 0 auto;
+}
+
+.warning-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--n-space-s);
+}
+
+.signup-button {
+  margin: 0 auto;
+  max-width: 200px;
 }
 
 @media (max-width: 768px) {
   .profile-container {
-    padding: 1rem;
+    padding: var(--n-space-m);
+  }
+  
+  .profile-header {
+    padding: var(--n-space-l);
+  }
+  
+  .header-content {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--n-space-m);
+  }
+  
+  .profile-content {
+    padding: var(--n-space-l);
+  }
+  
+  .detail-row {
+    flex-direction: column;
+    align-items: flex-start;
   }
   
   .account-actions {
     flex-direction: column;
+  }
+  
+  .action-button {
+    width: 100%;
+  }
+  
+  .update-message {
+    position: relative;
+    top: auto;
+    right: auto;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .preferences-form,
+  .account-actions {
+    padding: var(--n-space-m);
+  }
+  
+  .section-title {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--n-space-xs);
   }
 }
 </style>
