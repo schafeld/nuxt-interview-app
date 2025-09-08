@@ -2,7 +2,7 @@
 <template>
   <div class="app-layout">
     <!-- Skip Link for Accessibility -->
-    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <a href="#main-content" class="skip-link" @click="handleSkipLink">Skip to main content</a>
     
     <!-- Nord Header -->
     <nord-header class="app-header">
@@ -102,6 +102,19 @@ const checkSigninStatus = () => {
 
 const navigateToProfile = () => {
   navigateTo('/profile')
+}
+
+const handleSkipLink = (event: Event) => {
+  // Let the default behavior happen (scroll to target)
+  // But also ensure focus moves to the main content for screen readers
+  nextTick(() => {
+    if (process.client) {
+      const mainContent = document.getElementById('main-content')
+      if (mainContent) {
+        mainContent.focus()
+      }
+    }
+  })
 }
 
 const signOut = () => {
