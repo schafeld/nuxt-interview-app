@@ -10,7 +10,8 @@ export default defineNuxtConfig({
   css: [
     '@nordhealth/css', 
     '@nordhealth/themes/lib/vet.css',
-    '@nordhealth/icons'
+    '@nordhealth/icons',
+    '~/assets/css/nord-override.css'
   ],
   plugins: ['~/plugins/nordhealth.client.ts'],
   vue: {
