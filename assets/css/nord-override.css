@@ -1,0 +1,25 @@
+/* Fix for NordHealth components being hidden by :not(:defined) rule */
+/* Using higher specificity selectors instead of !important */
+/* TODO: Find a better fix */
+
+/* Override the :not(:defined) rule with more specific selectors */
+html body nord-text:not(:defined) {
+  visibility: visible;
+}
+
+/* Ensure all nord components are visible once defined */
+html body nord-text
+ {
+  visibility: visible;
+  display: block;
+}
+
+/* Special handling for inline components */
+html body nord-text { 
+  display: inline;
+}
+
+/* Ensure nested content is visible */
+html body nord-text * {
+  visibility: visible;
+}
