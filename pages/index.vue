@@ -5,7 +5,7 @@
       <header class="card-header">
         <div class="card-title">
           <h1 id="signup-title">
-            <nord-icon name="interface-love-heart-medical" size="m" class="title-icon" aria-hidden="true"></nord-icon>
+            <!-- <nord-icon name="generic-consent-agreed" size="m" class="title-icon" aria-hidden="true"></nord-icon> -->
             Sign Up for Our Veterinary Product
           </h1>
         </div>
@@ -390,9 +390,18 @@ const handleSubmit = async () => {
 }
 
 .password-toggle {
-  background: transparent;
-  border: none;
-  padding: var(--n-space-xs);
+  background: white;
+  border: 1px solid var(--n-color-border);
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  border-radius: 0;
+  border-top-right-radius: var(--_n-input-border-radius);
+  border-bottom-right-radius: var(--_n-input-border-radius);
 }
 
 .password-requirements {
