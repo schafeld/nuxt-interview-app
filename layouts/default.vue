@@ -58,7 +58,7 @@
           &copy; 2025 VetSignup - Veterinary Product Registration
         </p>
         <p class="footer-note">
-          Built with <nord-icon name="interface-favorite" size="xs" aria-hidden="true"></nord-icon> &amp; NordHealth Design System by <a href="https://github.com/schafeld/nuxt-interview-app" title="Github repository" target="_blank">Oliver Schafeld Code <nord-icon name="generic-github" size="s" color="var(--n-color-text)" aria-hidden="true"></nord-icon></a>
+          Built with <nord-icon name="interface-favorite" size="xs" aria-hidden="true"></nord-icon> &amp; NordHealth Design System by <a href="https://github.com/schafeld/nuxt-interview-app" title="Github repository" target="_blank">Oliver Schafeld <nord-icon name="generic-github" size="s" color="var(--n-color-text)" aria-hidden="true"></nord-icon></a>
         </p>
       </div>
     </nord-footer>
