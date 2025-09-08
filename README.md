@@ -35,6 +35,7 @@ A modern, professional client-side rendered Nuxt 3 application for veterinary pr
 ```bash
 git clone <repository-url>
 cd veterinary-signup-app
+```
 
 2. **Install dependencies**
 
