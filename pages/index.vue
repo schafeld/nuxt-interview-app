@@ -129,7 +129,7 @@
           size="l"
           class="submit-button"
         >
-          <nord-icon name="interface-user-add" size="s" slot="start"></nord-icon>
+          <nord-icon name="user-add" size="s" slot="start"></nord-icon>
           {{ isSubmitting ? 'Creating Account...' : 'Sign Up' }}
         </nord-button>
         

@@ -123,7 +123,7 @@
             </div>
           </div>
           <nord-button @click="goToSignup" size="l" class="signup-button">
-            <nord-icon name="interface-user-add" size="s" slot="start"></nord-icon>
+            <nord-icon name="user-add" size="s" slot="start"></nord-icon>
             Go to Signup
           </nord-button>
         </nord-banner>

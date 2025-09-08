@@ -66,11 +66,11 @@
         
         <div class="action-buttons">
           <nord-button @click="startOver" variant="secondary" size="l">
-            <nord-icon name="interface-user-add" size="s" slot="start"></nord-icon>
+            <nord-icon name="user-add" size="s" slot="start"></nord-icon>
             Sign Up Another Account
           </nord-button>
           <nord-button @click="goToDashboard" size="l">
-            <nord-icon name="interface-arrow-right" size="s" slot="end"></nord-icon>
+            <nord-icon name="arrow-right" size="s" slot="end"></nord-icon>
             Continue to Profile
           </nord-button>
         </div>

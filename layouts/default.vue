@@ -5,7 +5,7 @@
     <nord-header class="app-header">
       <div class="header-content">
         <div class="header-left">
-          <nord-icon name="interface-love-heart-medical" size="l" class="app-logo"></nord-icon>
+          <nord-icon name="medical-heart-rate" size="l" class="app-logo"></nord-icon>
           <nord-text variant="heading-m" class="app-title">VetSignup</nord-text>
         </div>
         
@@ -13,7 +13,7 @@
           <nord-dropdown>
             <nord-button slot="toggle" variant="plain" class="profile-button">
               <nord-avatar size="s" name="User Profile" class="profile-avatar">
-                <nord-icon name="interface-user-single" size="s"></nord-icon>
+                <nord-icon name="user-single" size="s"></nord-icon>
               </nord-avatar>
               <span class="profile-email">{{ userEmail }}</span>
               <nord-icon name="arrow-down" size="s" class="dropdown-arrow"></nord-icon>
@@ -21,7 +21,7 @@
             
             <nord-dropdown-group>
               <nord-dropdown-item @click="navigateToProfile">
-                <nord-icon name="interface-user-single" size="s"></nord-icon>
+                <nord-icon name="user-single" size="s"></nord-icon>
                 View Profile
               </nord-dropdown-item>
               <nord-dropdown-item @click="signOut" variant="destructive">
