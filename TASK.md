@@ -7,6 +7,7 @@ You are a very skilled Senior Web Developer. Your task ist to set up a prototype
 The web app you are to create needs to fullfil the following functional requirements:
 
 Create a client-side only rendered Nuxt 3 application that allows people to sign up for a product. The form should contain fields for email and password, which should be required and show an error if no value is entered. The password field should have a way to make the password visible. The user should be able to choose to receive occasional product updates and announcements. Once signed up, they should be presented with a success page.
+Signed-in users should be able to access a profile page to see their details (e.g. by clicking an avatar icon in the header), persistence of data can be mocked using localStorage.
 
 Use the Nordhealth Design System - VET Theme ([https://nordhealth.design/?theme=vet/]) appropriately!
 
