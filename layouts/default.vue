@@ -253,6 +253,7 @@ const signOut = () => {
   background: var(--n-color-surface-raised);
   color: var(--n-color-text-weakest);
   font-family: Arial, Helvetica, sans-serif;
+  visibility: visible;
 }
 
 .footer-content {
