@@ -70,7 +70,7 @@
                 label="Receive product updates and announcements"
                 class="preference-checkbox"
               >
-                <nord-icon name="interface-email-action-send" size="s" slot="icon"></nord-icon>
+                <!-- <nord-icon name="interface-email-action-send" size="s" slot="icon"></nord-icon> -->
               </nord-checkbox>
               
               <div class="form-actions">

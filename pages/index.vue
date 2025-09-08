@@ -154,7 +154,7 @@
             class="updates-checkbox"
             aria-describedby="updates-description"
           >
-            <nord-icon name="interface-email-action-send" size="s" slot="icon" aria-hidden="true"></nord-icon>
+            <!-- <nord-icon name="interface-email-action-send" size="s" slot="icon" aria-hidden="true"></nord-icon> -->
           </nord-checkbox>
           <div id="updates-description" class="visually-hidden">
             Optional: Check this box to receive product updates and announcements via email

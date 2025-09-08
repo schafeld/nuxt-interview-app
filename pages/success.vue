@@ -5,12 +5,10 @@
       <div class="success-content">
         <div class="success-header">
           <nord-icon name="interface-tick-circle" size="xl" class="success-icon"></nord-icon>
-          <nord-text variant="heading-l" class="success-title">
-            Welcome to Our Veterinary Community!
-          </nord-text>
-          <nord-text variant="body-l" color="weak" class="success-subtitle">
+            <h1 class="success-title">Welcome to Our Veterinary Community!</h1>
+          <p class="success-subtitle">
             Thank you for signing up! Your account has been successfully created.
-          </nord-text>
+          </p>
         </div>
         
         <div v-if="signupData" class="signup-details">
@@ -27,7 +25,7 @@
                 </nord-text>
               </div>
               <div class="detail-row">
-                <nord-icon name="interface-email-action-send" size="s" class="detail-icon"></nord-icon>
+                <!-- <nord-icon name="interface-email-action-send" size="s" class="detail-icon"></nord-icon> -->
                 <nord-text variant="body-m">
                   <strong>Updates:</strong> 
                   {{ signupData.receiveUpdates ? 'Yes, you will receive updates' : 'No updates requested' }}
