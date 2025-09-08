@@ -1,7 +1,7 @@
 <!-- pages/profile.vue -->
 <template>
   <div class="profile-container">
-    <nord-card class="profile-card">
+    <nord-card class="profile-card" padding="none">
       <div class="profile-header">
         <div class="header-content">
           <nord-avatar size="l" name="User Avatar" class="profile-avatar">
@@ -253,6 +253,8 @@ const goToSignup = () => {
   padding: var(--n-space-xl);
   background: var(--n-color-surface-raised);
   border-bottom: 1px solid var(--n-color-border);
+  border-top-left-radius: var(--n-border-radius);
+  border-top-right-radius: var(--n-border-radius);
 }
 
 .header-content {
