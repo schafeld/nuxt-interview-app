@@ -4,7 +4,6 @@
     <nord-card class="success-card">
       <div class="success-content">
         <div class="success-header">
-          <nord-icon name="interface-tick-circle" size="xl" class="success-icon"></nord-icon>
             <h1 class="success-title">Welcome to Our Veterinary Community!</h1>
           <p class="success-subtitle">
             Thank you for signing up! Your account has been successfully created.
@@ -16,7 +15,6 @@
             <div class="banner-content">
               <div class="banner-title">
                 <h2>
-                  <nord-icon name="interface-security-shield-check" size="s"></nord-icon>
                   Account Details
                 </h2>
               </div>
@@ -27,7 +25,7 @@
                 </p>
               </div>
               <div class="detail-row">
-                <!-- <nord-icon name="interface-email-action-send" size="s" class="detail-icon"></nord-icon> -->
+                <nord-icon name="interface-alarm" size="s" class="detail-icon"></nord-icon>
                 <p>
                   <strong>Updates:</strong> 
                   {{ signupData.receiveUpdates ? 'Yes, you will receive updates' : 'No updates requested' }}
@@ -50,20 +48,17 @@
               What's Next?
             </h2>
           </div>
-          <ul class="steps-list">
+          <ol class="steps-list">
             <li class="step-item">
-              <nord-icon name="interface-email" size="s" class="step-icon"></nord-icon>
               <p>Check your email for a confirmation message</p>
             </li>
             <li class="step-item">
-              <nord-icon name="interface-user-single" size="s" class="step-icon"></nord-icon>
               <p>Complete your profile setup</p>
             </li>
             <li class="step-item">
-              <nord-icon name="interface-love-heart-medical" size="s" class="step-icon"></nord-icon>
               <p>Explore our veterinary tools and resources</p>
             </li>
-          </ul>
+          </ol>
         </div>
         
         <div class="action-buttons">
@@ -143,10 +138,10 @@ const goToDashboard = () => {
 }
 
 .success-header {
-  text-align: center;
-  display: flex;
+  text-align: left;
+  /* display: flex;
   flex-direction: column;
-  gap: var(--n-space-m);
+  gap: var(--n-space-m); */
   padding-bottom: var(--n-space-l);
   border-bottom: 1px solid var(--n-color-border);
 }
@@ -161,6 +156,7 @@ const goToDashboard = () => {
   color: var(--n-color-text);
   font-size: var(--n-font-size-xl);
   font-weight: var(--n-font-weight-active);
+  margin-bottom: var(--n-space-m);
 }
 
 .success-subtitle {
@@ -177,7 +173,7 @@ const goToDashboard = () => {
   margin: 0;
   margin-bottom: var(--n-space-s);
   color: #0f5d1a; /* Darker green for better contrast */
-  font-size: var(--n-font-size-s);
+  font-size: var(--n-font-size-m);
   font-weight: var(--n-font-weight-active);
 }
 
@@ -244,11 +240,14 @@ const goToDashboard = () => {
   gap: var(--n-space-s);
 }
 
+
+
 .step-item {
   display: flex;
   align-items: flex-start;
   gap: var(--n-space-s);
   padding: var(--n-space-s);
+  padding-left: var(--n-space-l);
   background: var(--n-color-surface-raised);
   border-radius: var(--n-border-radius);
   border: 1px solid var(--n-color-border);

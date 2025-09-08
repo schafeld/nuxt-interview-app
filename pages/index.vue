@@ -5,7 +5,6 @@
       <header class="card-header">
         <div class="card-title">
           <h1 id="signup-title">
-            <!-- <nord-icon name="generic-consent-agreed" size="m" class="title-icon" aria-hidden="true"></nord-icon> -->
             Sign Up for Our Veterinary Product
           </h1>
         </div>
@@ -331,12 +330,16 @@ const handleSubmit = async () => {
 
 <style scoped>
 .signup-container {
-  min-height: 100vh;
+  min-height: 50vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: var(--n-space-m);
   background: linear-gradient(135deg, var(--n-color-surface-raised) 0%, var(--n-color-surface) 100%);
+}
+
+h1.signup-title {
+    text-align: left;
 }
 
 .signup-card {
@@ -356,8 +359,8 @@ const handleSubmit = async () => {
 
 .card-title h1 {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  /* align-items: center;
+  justify-content: center; */
   gap: var(--n-space-s);
   margin: 0;
   font-size: var(--n-font-size-l);
