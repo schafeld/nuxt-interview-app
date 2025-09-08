@@ -5,7 +5,7 @@
       <div class="profile-header">
         <div class="header-content">
           <nord-avatar size="l" name="User Avatar" class="profile-avatar">
-            <nord-icon name="interface-user-single" size="m"></nord-icon>
+            <nord-icon name="user-single" size="m"></nord-icon>
           </nord-avatar>
           <div class="header-text">
             <nord-text variant="heading-l" class="profile-title">User Profile</nord-text>
@@ -40,7 +40,7 @@
                   </div>
                 </div>
                 <div class="detail-row">
-                  <nord-icon name="interface-email-action-send" size="s" class="detail-icon"></nord-icon>
+                  <nord-icon name="generic-module" size="s" class="detail-icon"></nord-icon>
                   <div class="detail-content">
                     <nord-text variant="caption" color="weak">Product Updates</nord-text>
                     <nord-badge :variant="userData.receiveUpdates ? 'success' : 'neutral'">
@@ -59,7 +59,7 @@
 
         <div class="profile-section">
           <nord-text variant="heading-s" class="section-title">
-            <nord-icon name="interface-settings" size="s"></nord-icon>
+            <nord-icon name="interface-sort-up-small" size="s"></nord-icon>
             Update Preferences
           </nord-text>
           <nord-card class="preferences-card">
@@ -75,7 +75,7 @@
               
               <div class="form-actions">
                 <nord-button type="submit" :disabled="isUpdating" :loading="isUpdating" size="l">
-                  <nord-icon name="interface-save" size="s" slot="start"></nord-icon>
+                  <nord-icon name="interface-fast-forward" size="l" slot="start"></nord-icon>
                   {{ isUpdating ? 'Updating...' : 'Update Preferences' }}
                 </nord-button>
               </div>
@@ -256,7 +256,6 @@ const goToSignup = () => {
 }
 
 .profile-avatar {
-  background: var(--n-color-accent);
   color: var(--n-color-text-on-accent);
   margin-right: var(--n-space-s);
 }
