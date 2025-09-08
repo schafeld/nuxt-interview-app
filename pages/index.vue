@@ -1,7 +1,7 @@
 <!-- pages/index.vue -->
 <template>
   <div class="signup-container">
-    <nord-card class="signup-card">
+    <nord-card class="signup-card" padding="none">
       <header class="card-header">
         <nord-text variant="heading-l" class="card-title">
           <h1 id="signup-title">
@@ -150,7 +150,7 @@
           <nord-checkbox
             :checked="form.receiveUpdates"
             @change="updateReceiveUpdates"
-            label="I would like to receive occasional product updates and announcements"
+            label="I would like to receive occasional product updates and announcements about new features."
             class="updates-checkbox"
             aria-describedby="updates-description"
           >
@@ -350,6 +350,8 @@ const handleSubmit = async () => {
   text-align: center;
   border-bottom: 1px solid var(--n-color-border);
   background: var(--n-color-surface-raised);
+  border-top-left-radius: var(--n-border-radius);
+  border-top-right-radius: var(--n-border-radius);
 }
 
 .card-title {
@@ -387,9 +389,9 @@ const handleSubmit = async () => {
 }
 
 .password-toggle {
-  background: transparent !important;
-  border: none !important;
-  padding: var(--n-space-xs) !important;
+  background: transparent;
+  border: none;
+  padding: var(--n-space-xs);
 }
 
 .password-requirements {
@@ -445,12 +447,12 @@ const handleSubmit = async () => {
   color: var(--n-color-text-weaker);
 }
 
-.updates-checkbox {
+/* .updates-checkbox {
   padding: var(--n-space-s);
   background: var(--n-color-surface-raised);
   border-radius: var(--n-border-radius);
   border: 1px solid var(--n-color-border);
-}
+} */
 
 .submit-button {
   margin-top: var(--n-space-s);
