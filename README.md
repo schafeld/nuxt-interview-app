@@ -1,4 +1,4 @@
-# Veterinary Signup Application
+# Veterinary Signup Application – WORK IN PROGRESS WiP
 
 A modern, professional client-side rendered Nuxt 3 application for veterinary product signups, built with the comprehensive NordHealth Design System VET theme and NordIcons.
 
