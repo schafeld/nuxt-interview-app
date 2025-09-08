@@ -258,7 +258,7 @@ const goToSignup = () => {
 .profile-avatar {
   background: var(--n-color-accent);
   color: var(--n-color-text-on-accent);
-  border: 3px solid var(--n-color-border);
+  margin-right: var(--n-space-s);
 }
 
 .header-text {

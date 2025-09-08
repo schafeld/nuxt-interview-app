@@ -157,7 +157,7 @@ const signOut = () => {
 }
 
 .profile-avatar {
-  border: 2px solid var(--n-color-border);
+  margin-right: var(--n-space-s);
 }
 
 .profile-email {
@@ -172,6 +172,7 @@ const signOut = () => {
 .dropdown-arrow {
   color: var(--n-color-text-weak);
   transition: transform 0.2s ease;
+  margin-left: var(--n-space-s);
 }
 
 .profile-button[aria-expanded="true"] .dropdown-arrow {
