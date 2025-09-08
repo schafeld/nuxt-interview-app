@@ -9,11 +9,14 @@ A modern, client-side rendered Nuxt 3 application for veterinary product signups
 - ✅ NordHealth Design System VET theme integration
 - ✅ Comprehensive form validation with configurable password complexity
 - ✅ Password visibility toggle
+- ✅ User profile page with avatar navigation
 - ✅ Route guards for protected pages
 - ✅ Unit tests with Vitest
 - ✅ End-to-end testing with Playwright
-- ✅ Responsive design
+- ✅ Responsive design with header/footer layout
 - ✅ Accessible components
+- ✅ Session-based authentication simulation
+- ✅ LocalStorage persistence for user preferences
 
 ## Tech Stack
 
@@ -80,10 +83,14 @@ runtimeConfig: {
 ├── composables/           # Vue composables
 │   ├── usePasswordValidation.ts
 │   └── useFormValidation.ts
+├── layouts/              # Nuxt layouts
+│   └── default.vue      # Main layout with header/footer
 ├── middleware/           # Route middleware
-│   └── signup.ts
+│   ├── auth.ts          # Profile authentication guard
+│   └── signup.ts        # Success page guard
 ├── pages/               # Application pages
 │   ├── index.vue       # Signup form
+│   ├── profile.vue     # User profile page
 │   └── success.vue     # Success page
 ├── plugins/             # Nuxt plugins
 │   └── nordhealth.client.ts

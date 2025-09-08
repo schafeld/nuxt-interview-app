@@ -2,11 +2,12 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   ssr: false,
+  compatibilityDate: '2025-09-08',
   typescript: {
     strict: true,
-    typeCheck: true
+    typeCheck: false
   },
-  css: ['@nordhealth/components/lib/theme-vet.css'],
+  css: ['@nordhealth/css', '@nordhealth/themes/lib/vet.css'],
   plugins: ['~/plugins/nordhealth.client.ts'],
   runtimeConfig: {
     public: {

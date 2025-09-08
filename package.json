@@ -17,12 +17,15 @@
     "@playwright/test": "^1.40.0",
     "@types/node": "^20.8.0",
     "@vue/test-utils": "^2.4.0",
-    "happy-dom": "^12.10.0",
+    "happy-dom": "^18.0.1",
     "nuxt": "^3.8.0",
     "typescript": "^5.2.0",
-    "vitest": "^3.2.0"
+    "vitest": "^3.2.0",
+    "vue-tsc": "^3.0.6"
   },
   "dependencies": {
-    "@nordhealth/components": "^2.0.0"
+    "@nordhealth/components": "^2.0.0",
+    "@nordhealth/css": "^4.1.0",
+    "@nordhealth/themes": "^9.0.0"
   }
 }
