@@ -37,3 +37,9 @@ coverage/
 
 # Static generated files
 static/dist/
+
+# Ignore Playwright repors
+playwright-report/
+test-results/
+test-results/*
+test-results/**/*

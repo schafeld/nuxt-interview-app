@@ -4,10 +4,10 @@
     <nord-card class="signup-card">
       <header class="card-header">
         <nord-text variant="heading-l" class="card-title">
-          <h2 id="signup-title">
+          <h1 id="signup-title">
             <nord-icon name="interface-love-heart-medical" size="m" class="title-icon" aria-hidden="true"></nord-icon>
             Sign Up for Our Veterinary Product
-          </h2>
+          </h1>
         </nord-text>
         <nord-text variant="body-m" color="weak" class="card-subtitle">
           <p>Join our platform to access professional veterinary tools and resources</p>
@@ -27,7 +27,7 @@
             required
             class="email-input"
             :aria-describedby="getFieldError('email') ? 'email-error' : undefined"
-            aria-invalid="getFieldError('email') ? 'true' : 'false'"
+            :aria-invalid="getFieldError('email') ? 'true' : 'false'"
           >
             <nord-icon slot="start" name="interface-email" size="s" aria-hidden="true"></nord-icon>
           </nord-input>
@@ -48,7 +48,7 @@
             required
             class="password-input"
             :aria-describedby="form.password ? 'password-requirements' : (getFieldError('password') ? 'password-error' : undefined)"
-            aria-invalid="getFieldError('password') ? 'true' : 'false'"
+            :aria-invalid="getFieldError('password') ? 'true' : 'false'"
           >
             <nord-icon slot="start" name="interface-lock" size="s" aria-hidden="true"></nord-icon>
             <nord-button
@@ -57,11 +57,14 @@
               size="s"
               @click="togglePasswordVisibility"
               type="button"
-              :aria-label="showPassword ? 'Hide password' : 'Show password'"
               :aria-pressed="showPassword"
+              :aria-label="showPassword ? 'Hide password' : 'Show password'"
+              :title="showPassword ? 'Hide password' : 'Show password'"
               class="password-toggle"
+              ref="passwordToggleButton"
             >
               <nord-icon :name="showPassword ? 'interface-edit-on' : 'interface-edit-off'" size="s"></nord-icon>
+              <span class="visually-hidden">{{ showPassword ? 'Hide password' : 'Show password' }}</span>
             </nord-button>
           </nord-input>
         </div>
@@ -71,10 +74,10 @@
           <nord-banner variant="info" class="requirements-banner" role="region" aria-labelledby="password-requirements-title">
             <div id="password-requirements" class="requirements-content">
               <nord-text variant="body-s" color="default" class="requirements-title">
-                <h3 id="password-requirements-title">
+                <h2 id="password-requirements-title">
                   <nord-icon name="interface-security-shield-check" size="s" aria-hidden="true"></nord-icon>
                   Password Requirements:
-                </h3>
+                </h2>
               </nord-text>
               <ul class="requirements-list" role="list">
                 <li :class="{ valid: passwordChecks.length }" role="listitem">
@@ -82,9 +85,10 @@
                     :name="passwordChecks.length ? 'interface-tick-circle' : 'interface-dot'" 
                     size="xs"
                     :class="passwordChecks.length ? 'icon-valid' : 'icon-pending'"
-                    :aria-label="passwordChecks.length ? 'Requirement met' : 'Requirement not met'"
+                    aria-hidden="true"
                   ></nord-icon>
-                  <span :aria-label="passwordChecks.length ? 'Requirement met: ' : 'Requirement not met: '">
+                  <span>
+                    <span class="visually-hidden">{{ passwordChecks.length ? 'Requirement met: ' : 'Requirement not met: ' }}</span>
                     At least {{ passwordConfig.minLength }} characters
                   </span>
                 </li>
@@ -93,9 +97,10 @@
                     :name="passwordChecks.uppercase ? 'interface-tick-circle' : 'interface-dot'" 
                     size="xs"
                     :class="passwordChecks.uppercase ? 'icon-valid' : 'icon-pending'"
-                    :aria-label="passwordChecks.uppercase ? 'Requirement met' : 'Requirement not met'"
+                    aria-hidden="true"
                   ></nord-icon>
-                  <span :aria-label="passwordChecks.uppercase ? 'Requirement met: ' : 'Requirement not met: '">
+                  <span>
+                    <span class="visually-hidden">{{ passwordChecks.uppercase ? 'Requirement met: ' : 'Requirement not met: ' }}</span>
                     At least one uppercase letter
                   </span>
                 </li>
@@ -104,9 +109,10 @@
                     :name="passwordChecks.lowercase ? 'interface-tick-circle' : 'interface-dot'" 
                     size="xs"
                     :class="passwordChecks.lowercase ? 'icon-valid' : 'icon-pending'"
-                    :aria-label="passwordChecks.lowercase ? 'Requirement met' : 'Requirement not met'"
+                    aria-hidden="true"
                   ></nord-icon>
-                  <span :aria-label="passwordChecks.lowercase ? 'Requirement met: ' : 'Requirement not met: '">
+                  <span>
+                    <span class="visually-hidden">{{ passwordChecks.lowercase ? 'Requirement met: ' : 'Requirement not met: ' }}</span>
                     At least one lowercase letter
                   </span>
                 </li>
@@ -115,9 +121,10 @@
                     :name="passwordChecks.numbers ? 'interface-tick-circle' : 'interface-dot'" 
                     size="xs"
                     :class="passwordChecks.numbers ? 'icon-valid' : 'icon-pending'"
-                    :aria-label="passwordChecks.numbers ? 'Requirement met' : 'Requirement not met'"
+                    aria-hidden="true"
                   ></nord-icon>
-                  <span :aria-label="passwordChecks.numbers ? 'Requirement met: ' : 'Requirement not met: '">
+                  <span>
+                    <span class="visually-hidden">{{ passwordChecks.numbers ? 'Requirement met: ' : 'Requirement not met: ' }}</span>
                     At least one number
                   </span>
                 </li>
@@ -126,9 +133,10 @@
                     :name="passwordChecks.specialChars ? 'interface-tick-circle' : 'interface-dot'" 
                     size="xs"
                     :class="passwordChecks.specialChars ? 'icon-valid' : 'icon-pending'"
-                    :aria-label="passwordChecks.specialChars ? 'Requirement met' : 'Requirement not met'"
+                    aria-hidden="true"
                   ></nord-icon>
-                  <span :aria-label="passwordChecks.specialChars ? 'Requirement met: ' : 'Requirement not met: '">
+                  <span>
+                    <span class="visually-hidden">{{ passwordChecks.specialChars ? 'Requirement met: ' : 'Requirement not met: ' }}</span>
                     At least {{ passwordConfig.minSpecialChars }} special characters
                   </span>
                 </li>
@@ -206,11 +214,34 @@ const form = reactive<SignupForm>({
 const showPassword = ref(false)
 const isSubmitting = ref(false)
 const errors = ref<ValidationError[]>([])
+const passwordToggleButton = ref<HTMLElement | null>(null)
 
 // Composables
 const { validateForm } = useFormValidation()
 const config = useRuntimeConfig()
 const passwordConfig = config.public.passwordConfig
+
+// Update password toggle accessibility when showPassword changes
+watch(showPassword, (newValue) => {
+  nextTick(() => {
+    if (passwordToggleButton.value) {
+      const innerButton = passwordToggleButton.value.querySelector('button')
+      if (innerButton) {
+        innerButton.setAttribute('aria-label', newValue ? 'Hide password' : 'Show password')
+      }
+    }
+  })
+}, { immediate: true })
+
+// Ensure accessibility is set on mount
+onMounted(() => {
+  if (passwordToggleButton.value) {
+    const innerButton = passwordToggleButton.value.querySelector('button')
+    if (innerButton) {
+      innerButton.setAttribute('aria-label', showPassword.value ? 'Hide password' : 'Show password')
+    }
+  }
+})
 
 // Computed
 const passwordChecks = computed(() => {
@@ -529,5 +560,23 @@ fieldset {
 .password-toggle:focus-visible {
   outline: 2px solid var(--n-color-border-focus);
   outline-offset: 2px;
+}
+
+/* Password requirements accessibility improvements */
+.requirements-list li.valid span {
+  color: #0f5d1a; /* Darker green for better contrast on blue background */
+  font-weight: var(--n-font-weight-active);
+}
+
+.requirements-list li .icon-valid {
+  color: #0f5d1a; /* Match the text color */
+}
+
+.requirements-list li:not(.valid) span {
+  color: var(--n-color-text);
+}
+
+.requirements-list li .icon-pending {
+  color: var(--n-color-text-weak);
 }
 </style>

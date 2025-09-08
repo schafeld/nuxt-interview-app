@@ -5,12 +5,12 @@
     <a href="#main-content" class="skip-link">Skip to main content</a>
     
     <!-- Nord Header -->
-    <nord-header class="app-header" role="banner">
+    <nord-header class="app-header">
       <div class="header-content">
         <div class="header-left">
           <nord-icon name="medical-heart-rate" size="l" class="app-logo" aria-hidden="true"></nord-icon>
           <nord-text variant="heading-m" class="app-title">
-            <h1>VetSignup</h1>
+            VetSignup
           </nord-text>
         </div>
         
@@ -47,7 +47,7 @@
     </nord-header>
     
     <!-- Main Content -->
-    <main id="main-content" class="app-main" role="main">
+    <main id="main-content" class="app-main" role="main" tabindex="-1">
       <slot />
     </main>
     
