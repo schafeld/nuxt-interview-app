@@ -50,7 +50,7 @@
               type="button"
               class="password-toggle"
             >
-              <nord-icon :name="showPassword ? 'interface-view-hide' : 'interface-view-show'" size="s"></nord-icon>
+              <nord-icon :name="showPassword ? 'interface-edit-on' : 'interface-edit-off'" size="s"></nord-icon>
             </nord-button>
           </nord-input>
         </div>
