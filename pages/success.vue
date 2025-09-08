@@ -14,50 +14,54 @@
         <div v-if="signupData" class="signup-details">
           <nord-banner variant="success" class="details-banner">
             <div class="banner-content">
-              <nord-text variant="heading-s" class="banner-title">
-                <nord-icon name="interface-security-shield-check" size="s"></nord-icon>
-                Account Details
-              </nord-text>
+              <div class="banner-title">
+                <h2>
+                  <nord-icon name="interface-security-shield-check" size="s"></nord-icon>
+                  Account Details
+                </h2>
+              </div>
               <div class="detail-row">
                 <nord-icon name="interface-email" size="s" class="detail-icon"></nord-icon>
-                <nord-text variant="body-m">
+                <p>
                   <strong>Email:</strong> {{ signupData.email }}
-                </nord-text>
+                </p>
               </div>
               <div class="detail-row">
                 <!-- <nord-icon name="interface-email-action-send" size="s" class="detail-icon"></nord-icon> -->
-                <nord-text variant="body-m">
+                <p>
                   <strong>Updates:</strong> 
                   {{ signupData.receiveUpdates ? 'Yes, you will receive updates' : 'No updates requested' }}
-                </nord-text>
+                </p>
               </div>
               <div class="detail-row">
                 <nord-icon name="interface-time" size="s" class="detail-icon"></nord-icon>
-                <nord-text variant="body-m">
+                <p>
                   <strong>Created:</strong> {{ formatDate(signupData.timestamp) }}
-                </nord-text>
+                </p>
               </div>
             </div>
           </nord-banner>
         </div>
         
         <div class="next-steps">
-          <nord-text variant="heading-s" class="steps-title">
-            <nord-icon name="interface-list-check" size="s"></nord-icon>
-            What's Next?
-          </nord-text>
+          <div class="steps-title">
+            <h2>
+              <nord-icon name="interface-list-check" size="s"></nord-icon>
+              What's Next?
+            </h2>
+          </div>
           <ul class="steps-list">
             <li class="step-item">
               <nord-icon name="interface-email" size="s" class="step-icon"></nord-icon>
-              <nord-text variant="body-m">Check your email for a confirmation message</nord-text>
+              <p>Check your email for a confirmation message</p>
             </li>
             <li class="step-item">
               <nord-icon name="interface-user-single" size="s" class="step-icon"></nord-icon>
-              <nord-text variant="body-m">Complete your profile setup</nord-text>
+              <p>Complete your profile setup</p>
             </li>
             <li class="step-item">
               <nord-icon name="interface-love-heart-medical" size="s" class="step-icon"></nord-icon>
-              <nord-text variant="body-m">Explore our veterinary tools and resources</nord-text>
+              <p>Explore our veterinary tools and resources</p>
             </li>
           </ul>
         </div>
@@ -155,11 +159,49 @@ const goToDashboard = () => {
 .success-title {
   margin: 0;
   color: var(--n-color-text);
+  font-size: var(--n-font-size-xl);
+  font-weight: var(--n-font-weight-active);
 }
 
 .success-subtitle {
   margin: 0;
   line-height: 1.5;
+  font-size: var(--n-font-size-m);
+  color: var(--n-color-text-weak);
+}
+
+.banner-title h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--n-space-xs);
+  margin: 0;
+  margin-bottom: var(--n-space-s);
+  color: #0f5d1a; /* Darker green for better contrast */
+  font-size: var(--n-font-size-s);
+  font-weight: var(--n-font-weight-active);
+}
+
+.detail-row p {
+  margin: 0;
+  font-size: var(--n-font-size-m);
+  color: var(--n-color-text);
+}
+
+.steps-title h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--n-space-xs);
+  margin: 0;
+  margin-bottom: var(--n-space-m);
+  color: var(--n-color-text);
+  font-size: var(--n-font-size-s);
+  font-weight: var(--n-font-weight-active);
+}
+
+.step-item p {
+  margin: 0;
+  font-size: var(--n-font-size-m);
+  color: var(--n-color-text);
 }
 
 .signup-details {
@@ -177,14 +219,6 @@ const goToDashboard = () => {
   gap: var(--n-space-s);
 }
 
-.banner-title {
-  display: flex;
-  align-items: center;
-  gap: var(--n-space-xs);
-  margin-bottom: var(--n-space-s);
-  color: var(--n-color-status-success);
-}
-
 .detail-row {
   display: flex;
   align-items: center;
@@ -199,14 +233,6 @@ const goToDashboard = () => {
 
 .next-steps {
   width: 100%;
-}
-
-.steps-title {
-  display: flex;
-  align-items: center;
-  gap: var(--n-space-xs);
-  margin-bottom: var(--n-space-m);
-  color: var(--n-color-text);
 }
 
 .steps-list {

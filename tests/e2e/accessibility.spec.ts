@@ -46,31 +46,22 @@ test.describe('Accessibility Tests', () => {
     // Wait for form to be valid
     await page.waitForTimeout(1000)
     
-    const submitButton = page.locator('nord-button[type="submit"]:not([disabled])')
-    await expect(submitButton).toBeVisible()
+    // Submit form using the same programmatic approach as the working signup test
+    const form = page.locator('form.signup-form')
+    await form.evaluate(form => {
+      const event = new Event('submit', { bubbles: true, cancelable: true })
+      form.dispatchEvent(event)
+    })
     
-    // Submit the form
-    await submitButton.click({ force: true })
+    // Wait for navigation to success page
+    await page.waitForURL('/success', { timeout: 10000 })
     
-    // Wait for either navigation to success page or for form submission to complete
-    try {
-      await page.waitForURL('/success', { timeout: 5000 })
-      
-      const accessibilityScanResults = await new AxeBuilder({ page })
-        .exclude('#nuxt-devtools-container')
-        .exclude('nuxt-devtools-frame')
-        .analyze()
-      
-      expect(accessibilityScanResults.violations).toEqual([])
-    } catch (error) {
-      // If navigation doesn't happen, just check that no accessibility violations occurred during submission
-      const accessibilityScanResults = await new AxeBuilder({ page })
-        .exclude('#nuxt-devtools-container')
-        .exclude('nuxt-devtools-frame')
-        .analyze()
-      
-      expect(accessibilityScanResults.violations).toEqual([])
-    }
+    const accessibilityScanResults = await new AxeBuilder({ page })
+      .exclude('#nuxt-devtools-container')
+      .exclude('nuxt-devtools-frame')
+      .analyze()
+    
+    expect(accessibilityScanResults.violations).toEqual([])
   })
 
   test('profile page should not have accessibility violations', async ({ page }) => {

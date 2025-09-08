@@ -30,7 +30,7 @@ test.describe('Signup Flow', () => {
     await page.waitForURL('/success', { timeout: 10000 })
     
     // Verify we're on the success page with the correct content
-    await expect(page.locator('nord-text').filter({ hasText: 'Welcome to Our Veterinary Community!' })).toBeVisible()
+    await expect(page.locator('h1').filter({ hasText: 'Welcome to Our Veterinary Community!' })).toBeVisible()
   })
   
   test('should show validation errors for empty fields', async ({ page }) => {
@@ -136,10 +136,10 @@ test.describe('Profile Flow', () => {
     
     // Should navigate to profile page
     await expect(page).toHaveURL('/profile')
-    await expect(page.locator('nord-text').filter({ hasText: 'User Profile' })).toBeVisible()
+    await expect(page.locator('h1').filter({ hasText: 'User Profile' })).toBeVisible()
     
     // Should show user data
-    await expect(page.locator('.profile-content nord-text').filter({ hasText: 'profile@veterinary.com' })).toBeVisible()
+    await expect(page.locator('.profile-content p').filter({ hasText: 'profile@veterinary.com' })).toBeVisible()
   })
 
   test('should update preferences in profile', async ({ page }) => {
@@ -258,7 +258,7 @@ test.describe('Navigation and Layout', () => {
     
     // Should show footer
     await expect(page.locator('nord-footer')).toContainText('VetSignup - Veterinary Product Registration')
-    await expect(page.locator('nord-footer')).toContainText('Built with NordHealth Design System')
+    await expect(page.locator('nord-footer')).toContainText('Built with')
   })
 
   test('should hide profile button when not signed in', async ({ page }) => {

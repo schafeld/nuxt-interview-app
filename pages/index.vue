@@ -3,15 +3,15 @@
   <div class="signup-container">
     <nord-card class="signup-card" padding="none">
       <header class="card-header">
-        <nord-text variant="heading-l" class="card-title">
+        <div class="card-title">
           <h1 id="signup-title">
             <nord-icon name="interface-love-heart-medical" size="m" class="title-icon" aria-hidden="true"></nord-icon>
             Sign Up for Our Veterinary Product
           </h1>
-        </nord-text>
-        <nord-text variant="body-m" color="weak" class="card-subtitle">
+        </div>
+        <div class="card-subtitle">
           <p>Join our platform to access professional veterinary tools and resources</p>
-        </nord-text>
+        </div>
       </header>
       
       <form @submit.prevent="handleSubmit" class="signup-form" aria-labelledby="signup-title" novalidate>
@@ -73,12 +73,12 @@
         <div v-if="form.password" class="password-requirements">
           <nord-banner variant="info" class="requirements-banner" role="region" aria-labelledby="password-requirements-title">
             <div id="password-requirements" class="requirements-content">
-              <nord-text variant="body-s" color="default" class="requirements-title">
+              <div class="requirements-title">
                 <h2 id="password-requirements-title">
                   <nord-icon name="interface-security-shield-check" size="s" aria-hidden="true"></nord-icon>
                   Password Requirements:
                 </h2>
-              </nord-text>
+              </div>
               <ul class="requirements-list" role="list">
                 <li :class="{ valid: passwordChecks.length }" role="listitem">
                   <nord-icon 
@@ -178,10 +178,10 @@
         <div v-if="errors.length > 0" class="error-messages">
           <nord-banner variant="danger" class="error-banner">
             <div class="error-content">
-              <nord-text variant="body-s" class="error-title">
+              <div class="error-title">
                 <nord-icon name="interface-alert-triangle" size="s"></nord-icon>
                 Please fix the following errors:
-              </nord-text>
+              </div>
               <ul class="error-list">
                 <li v-for="error in errors" :key="`${error.field}-${error.message}`">
                   <nord-icon name="interface-dot" size="xs"></nord-icon>
@@ -354,21 +354,22 @@ const handleSubmit = async () => {
   border-top-right-radius: var(--n-border-radius);
 }
 
-.card-title {
+.card-title h1 {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--n-space-s);
-  margin-bottom: var(--n-space-s);
+  margin: 0;
+  font-size: var(--n-font-size-l);
+  font-weight: var(--n-font-weight-active);
+  color: var(--n-color-text);
 }
 
-.title-icon {
-  color: var(--n-color-status-info);
-}
-
-.card-subtitle {
+.card-subtitle p {
   margin: 0;
   line-height: 1.5;
+  font-size: var(--n-font-size-m);
+  color: var(--n-color-text-weak);
 }
 
 .signup-form {
@@ -409,12 +410,32 @@ const handleSubmit = async () => {
   gap: var(--n-space-s);
 }
 
-.requirements-title {
+.card-title {
+  margin-bottom: var(--n-space-s);
+}
+
+.title-icon {
+  color: var(--n-color-status-info);
+}
+
+.requirements-title h2 {
   display: flex;
   align-items: center;
   gap: var(--n-space-xs);
   font-weight: var(--n-font-weight-active);
   margin: 0;
+  font-size: var(--n-font-size-s);
+  color: var(--n-color-text);
+}
+
+.error-title {
+  display: flex;
+  align-items: center;
+  gap: var(--n-space-xs);
+  font-weight: var(--n-font-weight-active);
+  margin: 0;
+  color: var(--n-color-status-danger);
+  font-size: var(--n-font-size-s);
 }
 
 .requirements-list {
@@ -447,13 +468,6 @@ const handleSubmit = async () => {
   color: var(--n-color-text-weaker);
 }
 
-/* .updates-checkbox {
-  padding: var(--n-space-s);
-  background: var(--n-color-surface-raised);
-  border-radius: var(--n-border-radius);
-  border: 1px solid var(--n-color-border);
-} */
-
 .submit-button {
   margin-top: var(--n-space-s);
   width: 100%;
@@ -473,15 +487,6 @@ const handleSubmit = async () => {
   display: flex;
   flex-direction: column;
   gap: var(--n-space-s);
-}
-
-.error-title {
-  display: flex;
-  align-items: center;
-  gap: var(--n-space-xs);
-  font-weight: var(--n-font-weight-active);
-  margin: 0;
-  color: var(--n-color-status-danger);
 }
 
 .error-list {

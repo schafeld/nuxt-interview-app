@@ -26,8 +26,7 @@ export default defineNuxtConfig({
   css: [
     '@nordhealth/css', 
     '@nordhealth/themes/lib/vet.css',
-    '@nordhealth/icons',
-    '~/assets/css/nord-override.css'
+    '@nordhealth/icons'
   ],
   plugins: ['~/plugins/nordhealth.client.ts'],
   vue: {

@@ -8,10 +8,10 @@
             <nord-icon name="user-single" size="m"></nord-icon>
           </nord-avatar>
           <div class="header-text">
-            <nord-text variant="heading-l" class="profile-title">User Profile</nord-text>
-            <nord-text variant="body-m" color="weak" class="profile-subtitle">
+            <h1 class="profile-title">User Profile</h1>
+            <p class="profile-subtitle">
               Manage your account settings and preferences
-            </nord-text>
+            </p>
           </div>
         </div>
       </div>
@@ -20,29 +20,31 @@
         <div class="profile-section">
           <nord-banner variant="info" class="info-banner">
             <div class="banner-content">
-              <nord-text variant="heading-s" class="section-title">
-                <nord-icon name="interface-security-shield-check" size="s"></nord-icon>
-                Account Information
-              </nord-text>
+              <div class="section-title">
+                <h2>
+                  <nord-icon name="interface-security-shield-check" size="s"></nord-icon>
+                  Account Information
+                </h2>
+              </div>
               <div class="profile-details">
                 <div class="detail-row">
                   <nord-icon name="interface-email" size="s" class="detail-icon"></nord-icon>
                   <div class="detail-content">
-                    <nord-text variant="caption" color="weak">Email Address</nord-text>
-                    <nord-text variant="body-m">{{ userData.email }}</nord-text>
+                    <span class="detail-label">Email Address</span>
+                    <p class="detail-value">{{ userData.email }}</p>
                   </div>
                 </div>
                 <div class="detail-row">
                   <nord-icon name="interface-time" size="s" class="detail-icon"></nord-icon>
                   <div class="detail-content">
-                    <nord-text variant="caption" color="weak">Account Created</nord-text>
-                    <nord-text variant="body-m">{{ formatDate(userData.timestamp) }}</nord-text>
+                    <span class="detail-label">Account Created</span>
+                    <p class="detail-value">{{ formatDate(userData.timestamp) }}</p>
                   </div>
                 </div>
                 <div class="detail-row">
                   <nord-icon name="generic-module" size="s" class="detail-icon"></nord-icon>
                   <div class="detail-content">
-                    <nord-text variant="caption" color="weak">Product Updates</nord-text>
+                    <span class="detail-label">Product Updates</span>
                     <nord-badge :variant="userData.receiveUpdates ? 'success' : 'neutral'">
                       <nord-icon 
                         :name="userData.receiveUpdates ? 'interface-tick-circle' : 'interface-remove-circle'" 
@@ -58,10 +60,12 @@
         </div>
 
         <div class="profile-section">
-          <nord-text variant="heading-s" class="section-title">
-            <nord-icon name="interface-sort-up-small" size="s"></nord-icon>
-            Update Preferences
-          </nord-text>
+          <div class="section-title">
+            <h2>
+              <nord-icon name="interface-sort-up-small" size="s"></nord-icon>
+              Update Preferences
+            </h2>
+          </div>
           <nord-card class="preferences-card">
             <form @submit.prevent="updatePreferences" class="preferences-form">
               <nord-checkbox
@@ -84,10 +88,12 @@
         </div>
 
         <div class="profile-section">
-          <nord-text variant="heading-s" class="section-title">
-            <nord-icon name="interface-security-shield" size="s"></nord-icon>
-            Account Actions
-          </nord-text>
+          <div class="section-title">
+            <h2>
+              <nord-icon name="interface-security-shield" size="s"></nord-icon>
+              Account Actions
+            </h2>
+          </div>
           <nord-card class="actions-card">
             <div class="account-actions">
               <nord-button @click="signOut" variant="secondary" size="l" class="action-button">
@@ -116,10 +122,10 @@
           <div class="banner-content">
             <nord-icon name="interface-alert-triangle" size="m" class="warning-icon"></nord-icon>
             <div class="warning-text">
-              <nord-text variant="heading-s">No Profile Data Found</nord-text>
-              <nord-text variant="body-m" color="weak">
+              <h2>No Profile Data Found</h2>
+              <p>
                 It looks like you haven't signed up yet or your session has expired.
-              </nord-text>
+              </p>
             </div>
           </div>
           <nord-button @click="goToSignup" size="l" class="signup-button">
@@ -269,11 +275,53 @@ const goToSignup = () => {
 .profile-title {
   margin: 0;
   color: var(--n-color-text);
+  font-size: var(--n-font-size-l);
+  font-weight: var(--n-font-weight-active);
 }
 
 .profile-subtitle {
   margin: 0;
   line-height: 1.5;
+  font-size: var(--n-font-size-m);
+  color: var(--n-color-text-weak);
+}
+
+.section-title h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--n-space-xs);
+  color: var(--n-color-text);
+  margin: 0;
+  margin-bottom: var(--n-space-s);
+  font-size: var(--n-font-size-s);
+  font-weight: var(--n-font-weight-active);
+}
+
+.detail-label {
+  font-size: var(--n-font-size-xs);
+  color: var(--n-color-text-weak);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-value {
+  margin: 0;
+  font-size: var(--n-font-size-m);
+  color: var(--n-color-text);
+  font-weight: var(--n-font-weight-active);
+}
+
+.warning-text h2 {
+  margin: 0;
+  font-size: var(--n-font-size-s);
+  font-weight: var(--n-font-weight-active);
+  color: var(--n-color-status-warning);
+}
+
+.warning-text p {
+  margin: 0;
+  font-size: var(--n-font-size-m);
+  color: var(--n-color-text-weak);
 }
 
 .profile-content {
@@ -290,10 +338,6 @@ const goToSignup = () => {
 }
 
 .section-title {
-  display: flex;
-  align-items: center;
-  gap: var(--n-space-xs);
-  color: var(--n-color-text);
   margin-bottom: var(--n-space-s);
 }
 

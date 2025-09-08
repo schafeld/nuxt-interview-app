@@ -11,7 +11,7 @@ export default defineNuxtPlugin(async () => {
         const requiredComponents = [
           'nord-button', 'nord-card', 'nord-input', 'nord-icon', 
           'nord-banner', 'nord-badge', 'nord-checkbox', 'nord-spinner',
-          'nord-text', 'nord-header', 'nord-footer', 'nord-dropdown',
+          'nord-header', 'nord-footer', 'nord-dropdown',
           'nord-dropdown-group', 'nord-dropdown-item', 'nord-avatar'
         ]
         
@@ -56,7 +56,7 @@ export default defineNuxtPlugin(async () => {
       const componentTags = [
         'nord-button', 'nord-card', 'nord-input', 'nord-icon', 
         'nord-banner', 'nord-badge', 'nord-checkbox', 'nord-spinner',
-        'nord-text', 'nord-header', 'nord-footer', 'nord-dropdown',
+        'nord-header', 'nord-footer', 'nord-dropdown',
         'nord-dropdown-group', 'nord-dropdown-item', 'nord-avatar'
       ]
       

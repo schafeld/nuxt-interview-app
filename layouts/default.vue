@@ -9,9 +9,9 @@
       <div class="header-content">
         <div class="header-left">
           <nord-icon name="medical-heart-rate" size="l" class="app-logo" aria-hidden="true"></nord-icon>
-          <nord-text variant="heading-m" class="app-title">
+          <h1 class="app-title">
             VetSignup
-          </nord-text>
+          </h1>
         </div>
         
         <nav class="header-right" v-if="isSignedIn" aria-label="User navigation">
@@ -54,13 +54,12 @@
     <!-- Nord Footer -->
     <nord-footer class="app-footer" role="contentinfo">
       <div class="footer-content">
-        <nord-text variant="body-xl" color="weaker">
+        <p class="footer-text">
           &copy; 2025 VetSignup - Veterinary Product Registration
-        </nord-text>
-        <nord-text variant="caption" color="weaker" class="footer-note">
-          
-          Built with <nord-icon name="interface-favorite" size="xs" aria-hidden="true"></nord-icon>&amp; NordHealth Design System by Oliver Schafeld
-        </nord-text>
+        </p>
+        <p class="footer-note">
+          Built with <nord-icon name="interface-favorite" size="xs" aria-hidden="true"></nord-icon> &amp; NordHealth Design System by Oliver Schafeld
+        </p>
       </div>
     </nord-footer>
   </div>
@@ -186,6 +185,24 @@ const signOut = () => {
 .app-title {
   color: var(--n-color-text);
   margin: 0;
+  font-size: var(--n-font-size-m);
+  font-weight: var(--n-font-weight-active);
+}
+
+.footer-text {
+  margin: 0;
+  font-size: var(--n-font-size-xl);
+  color: var(--n-color-text-weaker);
+}
+
+.footer-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--n-space-xs);
+  margin: 0;
+  font-size: var(--n-font-size-xs);
+  color: var(--n-color-text-weaker);
 }
 
 .header-right {
@@ -245,13 +262,6 @@ const signOut = () => {
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: var(--n-space-xs);
-}
-
-.footer-note {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   gap: var(--n-space-xs);
 }
 
