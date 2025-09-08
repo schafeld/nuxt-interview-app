@@ -54,12 +54,12 @@
     <!-- Nord Footer -->
     <nord-footer class="app-footer" role="contentinfo">
       <div class="footer-content">
-        <nord-text variant="body-s" color="weak">
+        <nord-text variant="body-xl" color="weaker">
           &copy; 2025 VetSignup - Veterinary Product Registration
         </nord-text>
-        <nord-text variant="caption" color="weak" class="footer-note">
-          <nord-icon name="interface-love-heart" size="xs" aria-hidden="true"></nord-icon>
-          Built with NordHealth Design System by Oliver Schafeld
+        <nord-text variant="caption" color="weaker" class="footer-note">
+          
+          Built with <nord-icon name="interface-favorite" size="xs" aria-hidden="true"></nord-icon>&amp; NordHealth Design System by Oliver Schafeld
         </nord-text>
       </div>
     </nord-footer>
@@ -234,6 +234,8 @@ const signOut = () => {
   margin-top: auto;
   border-top: 1px solid var(--n-color-border);
   background: var(--n-color-surface-raised);
+  color: var(--n-color-text-weakest);
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .footer-content {
