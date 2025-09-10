@@ -122,6 +122,20 @@ This is a client-side rendered Nuxt 3 application for veterinary product signups
 - **User-Friendly**: Redirects to signup if accessing success directly
 - **Accessibility**: Route changes announced to screen readers
 
+## Mandatory Code Generation Instructions for Claude
+
+**CRITICAL**: When generating code for this project, Claude MUST adhere to the following rules:
+
+- **NEVER make up or invent components, libraries, or APIs that do not exist** - Always verify component names and APIs against official documentation
+- **Only use documented NordHealth components** - If unsure about a component's existence, check the NordHealth Design System documentation or ask for clarification
+- **Verify all imports and dependencies** - Ensure all imported modules, components, and functions actually exist in the project or specified libraries
+- **Use only established patterns** - Follow existing code patterns in the project rather than inventing new approaches
+- **Validate syntax and structure** - Ensure all generated code follows proper TypeScript/Vue 3 syntax and project conventions
+- **Reference existing implementation** - When adding features, reference similar existing implementations in the codebase
+- **Document assumptions** - If making any assumptions about functionality, explicitly state them for verification
+
+**Example of what NOT to do**: Creating components like `nord-text`, `nord-paragraph`, or other non-existent NordHealth components. Always use standard HTML elements (`<p>`, `<span>`, `<div>`) or verified NordHealth components only.
+
 ## Code Quality Standards
 
 ### 1. File Organization
