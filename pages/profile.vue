@@ -30,21 +30,21 @@
                 <div class="detail-row">
                   <nord-icon name="interface-email" size="s" class="detail-icon"></nord-icon>
                   <div class="detail-content">
-                    <span class="detail-label">Email Address</span>
-                    <p class="detail-value">{{ userData.email }}</p>
+                    <span class="detail-label">Email Address:</span>
+                    <span class="detail-value">{{ userData.email }}</span>
                   </div>
                 </div>
                 <div class="detail-row">
                   <nord-icon name="interface-time" size="s" class="detail-icon"></nord-icon>
                   <div class="detail-content">
-                    <span class="detail-label">Account Created</span>
-                    <p class="detail-value">{{ formatDate(userData.timestamp) }}</p>
+                    <span class="detail-label">Account Created:</span>
+                    <span class="detail-value">{{ formatDate(userData.timestamp) }}</span>
                   </div>
                 </div>
                 <div class="detail-row">
                   <nord-icon name="generic-module" size="s" class="detail-icon"></nord-icon>
                   <div class="detail-content">
-                    <span class="detail-label">Product Updates</span>
+                    <span class="detail-label">Product Updates:</span>
                     <nord-badge :variant="userData.receiveUpdates ? 'success' : 'neutral'">
                       <nord-icon 
                         :name="userData.receiveUpdates ? 'interface-tick-circle' : 'interface-remove-circle'" 
@@ -300,17 +300,17 @@ const goToSignup = () => {
 }
 
 .detail-label {
-  font-size: var(--n-font-size-xs);
+  font-size: var(--n-font-size-s);
   color: var(--n-color-text-weak);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-weight: var(--n-font-weight-active);
+  margin-right: var(--n-space-xs);
 }
 
 .detail-value {
   margin: 0;
-  font-size: var(--n-font-size-m);
+  font-size: var(--n-font-size-s);
   color: var(--n-color-text);
-  font-weight: var(--n-font-weight-active);
+  font-weight: var(--n-font-weight-normal);
 }
 
 .warning-text h2 {
@@ -358,16 +358,21 @@ const goToSignup = () => {
   display: flex;
   flex-direction: column;
   gap: var(--n-space-s);
+  align-items: center;
 }
 
 .detail-row {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: var(--n-space-s);
   padding: var(--n-space-s);
   background: var(--n-color-surface);
   border-radius: var(--n-border-radius);
   border: 1px solid var(--n-color-border);
+  text-align: center;
+  justify-content: center;
+  max-width: 400px;
+  width: 100%;
 }
 
 .detail-icon {
@@ -378,9 +383,10 @@ const goToSignup = () => {
 
 .detail-content {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: var(--n-space-xs);
   flex: 1;
+  text-align: left;
 }
 
 .preferences-card,
@@ -485,8 +491,16 @@ const goToSignup = () => {
   }
   
   .detail-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: left;
+  }
+  
+  .detail-content {
     flex-direction: column;
     align-items: flex-start;
+    gap: var(--n-space-xs);
   }
   
   .account-actions {
