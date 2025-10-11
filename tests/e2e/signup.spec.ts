@@ -139,7 +139,7 @@ test.describe('Profile Flow', () => {
     await expect(page.locator('h1').filter({ hasText: 'User Profile' })).toBeVisible()
     
     // Should show user data
-    await expect(page.locator('.profile-content p').filter({ hasText: 'profile@veterinary.com' })).toBeVisible()
+    await expect(page.locator('.detail-value').filter({ hasText: 'profile@veterinary.com' })).toBeVisible()
   })
 
   test('should update preferences in profile', async ({ page }) => {
