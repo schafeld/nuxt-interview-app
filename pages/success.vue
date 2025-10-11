@@ -44,7 +44,7 @@
         <div class="next-steps">
           <div class="steps-title">
             <h2>
-              <nord-icon name="interface-list-check" size="s"></nord-icon>
+              <nord-icon name="interface-checked" size="s"></nord-icon>
               What's Next?
             </h2>
           </div>
@@ -300,7 +300,7 @@ const goToDashboard = () => {
   
   .detail-row,
   .step-item {
-    flex-direction: column;
+    /* flex-direction: column; */
     align-items: flex-start;
     gap: var(--n-space-xs);
   }
@@ -324,7 +324,7 @@ const goToDashboard = () => {
   
   .detail-row {
     align-items: center;
-    text-align: center;
+    /* text-align: center; */
   }
 }
 </style>
