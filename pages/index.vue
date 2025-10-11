@@ -20,6 +20,7 @@
             type="email"
             :value="form.email"
             @input="updateEmail"
+            @blur="handleEmailBlur"
             :error="getFieldError('email')"
             label="Email Address"
             placeholder="Enter your email address"
@@ -30,9 +31,10 @@
           >
             <nord-icon slot="start" name="interface-email" size="s" aria-hidden="true"></nord-icon>
           </nord-input>
+          <!-- This is redundant, error message appears in a slot in the nord-input
           <div v-if="getFieldError('email')" id="email-error" class="error-message" role="alert">
             {{ getFieldError('email') }}
-          </div>
+          </div> -->
         </div>
         
         <!-- Password Field -->
@@ -81,9 +83,9 @@
               <ul class="requirements-list" role="list">
                 <li :class="{ valid: passwordChecks.length }" role="listitem">
                   <nord-icon 
-                    :name="passwordChecks.length ? 'interface-tick-circle' : 'interface-dot'" 
+                    :name="passwordChecks.length ? 'interface-checked' : 'interface-close'" 
                     size="xs"
-                    :class="passwordChecks.length ? 'icon-valid' : 'icon-pending'"
+                    :class="passwordChecks.length ? 'icon-valid checkmark' : 'icon-pending'"
                     aria-hidden="true"
                   ></nord-icon>
                   <span>
@@ -93,9 +95,9 @@
                 </li>
                 <li :class="{ valid: passwordChecks.uppercase }" role="listitem">
                   <nord-icon 
-                    :name="passwordChecks.uppercase ? 'interface-tick-circle' : 'interface-dot'" 
+                    :name="passwordChecks.uppercase ? 'interface-checked' : 'interface-close'" 
                     size="xs"
-                    :class="passwordChecks.uppercase ? 'icon-valid' : 'icon-pending'"
+                    :class="passwordChecks.uppercase ? 'icon-valid checkmark' : 'icon-pending'"
                     aria-hidden="true"
                   ></nord-icon>
                   <span>
@@ -105,9 +107,9 @@
                 </li>
                 <li :class="{ valid: passwordChecks.lowercase }" role="listitem">
                   <nord-icon 
-                    :name="passwordChecks.lowercase ? 'interface-tick-circle' : 'interface-dot'" 
+                    :name="passwordChecks.lowercase ? 'interface-checked' : 'interface-close'" 
                     size="xs"
-                    :class="passwordChecks.lowercase ? 'icon-valid' : 'icon-pending'"
+                    :class="passwordChecks.lowercase ? 'icon-valid checkmark' : 'icon-pending'"
                     aria-hidden="true"
                   ></nord-icon>
                   <span>
@@ -117,9 +119,9 @@
                 </li>
                 <li :class="{ valid: passwordChecks.numbers }" role="listitem">
                   <nord-icon 
-                    :name="passwordChecks.numbers ? 'interface-tick-circle' : 'interface-dot'" 
+                    :name="passwordChecks.numbers ? 'interface-checked' : 'interface-close'" 
                     size="xs"
-                    :class="passwordChecks.numbers ? 'icon-valid' : 'icon-pending'"
+                    :class="passwordChecks.numbers ? 'icon-valid checkmark' : 'icon-pending'"
                     aria-hidden="true"
                   ></nord-icon>
                   <span>
@@ -129,9 +131,9 @@
                 </li>
                 <li :class="{ valid: passwordChecks.specialChars }" role="listitem">
                   <nord-icon 
-                    :name="passwordChecks.specialChars ? 'interface-tick-circle' : 'interface-dot'" 
+                    :name="passwordChecks.specialChars ? 'interface-checked' : 'interface-close'" 
                     size="xs"
-                    :class="passwordChecks.specialChars ? 'icon-valid' : 'icon-pending'"
+                    :class="passwordChecks.specialChars ? 'icon-valid checkmark' : 'icon-pending'"
                     aria-hidden="true"
                   ></nord-icon>
                   <span>
@@ -190,6 +192,43 @@
             </div>
           </nord-banner>
         </div>
+        
+        <!-- Existing User Message -->
+        <div v-if="showExistingUserMessage" class="existing-user-message">
+          <nord-banner variant="warning" class="existing-user-banner">
+            <div class="existing-user-content">
+              <div class="existing-user-title">
+                <nord-icon name="user-single" size="s"></nord-icon>
+                Account Already Exists
+              </div>
+              <p class="existing-user-text">
+                It looks like you already have an account with the email <strong>{{ form.email }}</strong>.
+              </p>
+              <p class="existing-user-question">
+                Did you forget your password?
+              </p>
+              <div class="existing-user-actions">
+                <nord-button
+                  variant="primary"
+                  size="s"
+                  @click="handlePasswordReset"
+                  class="reset-button"
+                >
+                  <nord-icon name="interface-email-action-send" size="s" slot="start"></nord-icon>
+                  Send Password Reset Email
+                </nord-button>
+                <nord-button
+                  variant="plain"
+                  size="s"
+                  @click="dismissExistingUserMessage"
+                  class="dismiss-button"
+                >
+                  Use Different Email
+                </nord-button>
+              </div>
+            </div>
+          </nord-banner>
+        </div>
       </form>
     </nord-card>
   </div>
@@ -214,9 +253,11 @@ const showPassword = ref(false)
 const isSubmitting = ref(false)
 const errors = ref<ValidationError[]>([])
 const passwordToggleButton = ref<HTMLElement | null>(null)
+const emailTouched = ref(false)
+const showExistingUserMessage = ref(false)
 
 // Composables
-const { validateForm } = useFormValidation()
+const { validateForm, validateEmail } = useFormValidation()
 const config = useRuntimeConfig()
 const passwordConfig = config.public.passwordConfig
 
@@ -264,7 +305,75 @@ const isFormValid = computed(() => {
 const updateEmail = (event: Event) => {
   const target = event.target as HTMLInputElement
   form.email = target.value
-  clearFieldErrors('email')
+  // Clear email errors when user is typing
+  errors.value = errors.value.filter(error => error.field !== 'email')
+}
+
+const handleEmailBlur = () => {
+  emailTouched.value = true
+  showExistingUserMessage.value = false
+  
+  // Always clear existing email errors first
+  errors.value = errors.value.filter(error => error.field !== 'email')
+  
+  // Only validate if email has content (avoid "required" errors on blur)
+  if (form.email && form.email.trim()) {
+    const emailErrors = validateEmail(form.email)
+    if (emailErrors.length > 0) {
+      emailErrors.forEach(message => {
+        errors.value.push({ field: 'email', message })
+      })
+    }
+  }
+}
+
+const checkExistingUser = (email: string): boolean => {
+  // Mock existing users database - in real app this would be an API call
+  const existingUsers = [
+    'john.doe@example.com',
+    'jane.smith@veterinary.com',
+    'test@demo.com',
+    'user@example.org'
+  ]
+  
+  // Also check localStorage for previously signed up users
+  if (process.client) {
+    try {
+      const storedUsers = localStorage.getItem('registeredUsers')
+      if (storedUsers) {
+        const userList = JSON.parse(storedUsers)
+        existingUsers.push(...userList)
+      }
+    } catch (error) {
+      console.warn('Could not load stored users')
+    }
+  }
+  
+  return existingUsers.includes(email.toLowerCase())
+}
+
+const handlePasswordReset = () => {
+  // Mock password reset functionality
+  if (process.client) {
+    alert(`Password reset email would be sent to: ${form.email}`)
+  }
+  
+  // Reset form to pristine state
+  showExistingUserMessage.value = false
+  form.email = ''
+  form.password = ''
+  form.receiveUpdates = false
+  
+  // Clear all errors and touched states
+  errors.value = []
+  emailTouched.value = false
+}
+
+const dismissExistingUserMessage = () => {
+  showExistingUserMessage.value = false
+  form.email = ''
+  errors.value = errors.value.filter(error => error.field !== 'email')
+  emailTouched.value = false
 }
 
 const updatePassword = (event: Event) => {
@@ -294,6 +403,7 @@ const clearFieldErrors = (fieldName: string) => {
 const handleSubmit = async () => {
   isSubmitting.value = true
   errors.value = []
+  showExistingUserMessage.value = false
   
   try {
     // Validate form
@@ -304,8 +414,28 @@ const handleSubmit = async () => {
       return
     }
     
+    // Check if user already exists
+    if (checkExistingUser(form.email)) {
+      showExistingUserMessage.value = true
+      return
+    }
+    
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000))
+    
+    // Store the new user in localStorage for future "existing user" checks
+    if (process.client) {
+      try {
+        const storedUsers = localStorage.getItem('registeredUsers')
+        const userList = storedUsers ? JSON.parse(storedUsers) : []
+        if (!userList.includes(form.email.toLowerCase())) {
+          userList.push(form.email.toLowerCase())
+          localStorage.setItem('registeredUsers', JSON.stringify(userList))
+        }
+      } catch (error) {
+        console.warn('Could not store user for future checks')
+      }
+    }
     
     // Store signup completion in session storage
     if (process.client) {
@@ -518,6 +648,60 @@ h1.signup-title {
   color: var(--n-color-status-danger);
 }
 
+.existing-user-message {
+  margin-top: calc(-1 * var(--n-space-s));
+}
+
+.existing-user-banner {
+  background: var(--n-color-status-warning-background);
+  border-color: var(--n-color-status-warning);
+}
+
+.existing-user-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--n-space-s);
+}
+
+.existing-user-title {
+  display: flex;
+  align-items: center;
+  gap: var(--n-space-xs);
+  font-weight: var(--n-font-weight-active);
+  margin: 0;
+  color: var(--n-color-status-warning);
+  font-size: var(--n-font-size-s);
+}
+
+.existing-user-text {
+  margin: 0;
+  font-size: var(--n-font-size-s);
+  color: var(--n-color-text);
+  line-height: 1.4;
+}
+
+.existing-user-question {
+  margin: 0;
+  font-size: var(--n-font-size-s);
+  color: var(--n-color-text);
+  font-weight: var(--n-font-weight-active);
+}
+
+.existing-user-actions {
+  display: flex;
+  gap: var(--n-space-s);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.reset-button {
+  flex-shrink: 0;
+}
+
+.dismiss-button {
+  color: var(--n-color-text-weak);
+}
+
 fieldset {
   border: none;
   padding: 0;
@@ -538,11 +722,40 @@ fieldset {
   .card-header,
   .signup-form {
     padding: var(--n-space-m);
+    text-align: left;
   }
   
-  .card-title {
-    flex-direction: column;
-    gap: var(--n-space-xs);
+  .card-header {
+    text-align: left;
+  }
+  
+  .card-title h1 {
+    text-align: left;
+    justify-content: flex-start;
+  }
+  
+  .card-subtitle p {
+    text-align: left;
+  }
+  
+  .requirements-title h2 {
+    justify-content: flex-start;
+    text-align: left;
+  }
+  
+  .error-title {
+    justify-content: flex-start;
+    text-align: left;
+  }
+  
+  .email-input,
+  .password-input {
+    width: 100%;
+    max-width: none;
+  }
+  
+  .form-field {
+    width: 100%;
   }
 }
 
@@ -591,11 +804,19 @@ fieldset {
   color: #0f5d1a; /* Match the text color */
 }
 
+.requirements-list li .checkmark {
+  color: var(--n-color-status-success);
+  font-weight: bold;
+  transform: scale(1.2);
+  transition: all 0.3s ease;
+}
+
 .requirements-list li:not(.valid) span {
   color: var(--n-color-text);
 }
 
 .requirements-list li .icon-pending {
   color: var(--n-color-text-weak);
+  opacity: 0.5;
 }
 </style>
