@@ -288,6 +288,19 @@ export const useAuth = () => {
       
       if (process.client) {
         localStorage.setItem(TOKEN_KEY, token)
+        
+        // Also update the stored user data in registeredUsers
+        const users = getRegisteredUsers()
+        const userIndex = users.findIndex(user => user.email.toLowerCase() === state.user!.email.toLowerCase())
+        
+        if (userIndex !== -1) {
+          users[userIndex] = {
+            ...users[userIndex],
+            receiveUpdates,
+            timestamp: updatedUser.timestamp
+          }
+          saveRegisteredUsers(users)
+        }
       }
 
       state.user = updatedUser

@@ -128,6 +128,15 @@ test.describe('Profile Flow', () => {
     await page.goto('/profile')
     await navigateAndWaitForComponents(page, '/profile')
     
+    // Check initial localStorage state
+    const initialUsers = await page.evaluate(() => {
+      const stored = localStorage.getItem('registeredUsers')
+      return stored ? JSON.parse(stored) : []
+    })
+    expect(initialUsers.length).toBeGreaterThan(0)
+    const initialUser = initialUsers.find((user: any) => user.email === 'update@veterinary.com')
+    expect(initialUser.receiveUpdates).toBe(true) // Should be true from signup
+    
     // Update preferences
     const preferencesCheckbox = page.locator('nord-checkbox').filter({ hasText: 'Receive product updates' })
     await preferencesCheckbox.click()
@@ -137,6 +146,14 @@ test.describe('Profile Flow', () => {
     
     // Should show success message
     await expect(page.locator('nord-banner[variant="success"]')).toBeVisible()
+    
+    // Verify localStorage was updated
+    const updatedUsers = await page.evaluate(() => {
+      const stored = localStorage.getItem('registeredUsers')
+      return stored ? JSON.parse(stored) : []
+    })
+    const updatedUser = updatedUsers.find((user: any) => user.email === 'update@veterinary.com')
+    expect(updatedUser.receiveUpdates).toBe(false) // Should now be false
   })
 
   test('should redirect to signup when accessing profile without auth', async ({ page }) => {

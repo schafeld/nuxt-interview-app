@@ -79,7 +79,12 @@ describe('useAuth', () => {
     // Check that the login method was called (since we can't easily test reactive state in this mocked environment)
     const setItemCalls = mockLocalStorage.setItem.mock.calls
     expect(setItemCalls.length).toBeGreaterThan(0)
-    expect(setItemCalls[0][0]).toBe('vet_auth_token')
+    
+    // The login method calls register which first stores registeredUsers, then the token
+    // So we need to check for the token storage specifically
+    const tokenCall = setItemCalls.find(call => call[0] === 'vet_auth_token')
+    expect(tokenCall).toBeDefined()
+    expect(tokenCall![0]).toBe('vet_auth_token')
   })
 
   it('should handle login errors gracefully', async () => {
@@ -94,14 +99,17 @@ describe('useAuth', () => {
       throw new Error('UUID generation failed')
     })
 
+    // The composable catches all errors and returns a generic message
     await expect(auth.login({
       email: 'test@example.com',
       password: 'TestPassword123!@',
       receiveUpdates: true
-    })).rejects.toThrow('UUID generation failed')
+    })).rejects.toThrow('Registration failed. Please try again.')
 
-    // Verify no token was stored on error
-    expect(mockLocalStorage.setItem).not.toHaveBeenCalled()
+    // Verify no token was stored on error (registeredUsers might still be called before the error)
+    const setItemCalls = mockLocalStorage.setItem.mock.calls
+    const tokenCall = setItemCalls.find(call => call[0] === 'vet_auth_token')
+    expect(tokenCall).toBeUndefined()
 
     // Restore console.error
     consoleSpy.mockRestore()
@@ -132,20 +140,57 @@ describe('useAuth', () => {
     const { useAuth } = await import('~/composables/useAuth')
     const auth = useAuth()
 
-    // First login
+    // Use a unique email for this test to avoid conflicts
+    const testEmail = 'preferences-test@example.com'
+    
+    // Set up mock localStorage to return the users data that was stored during login
+    let storedUsers: any[] = []
+    mockLocalStorage.getItem.mockImplementation((key: string) => {
+      if (key === 'registeredUsers') {
+        return storedUsers.length > 0 ? JSON.stringify(storedUsers) : null
+      }
+      return null
+    })
+    
+    // Capture what gets stored during login
+    mockLocalStorage.setItem.mockImplementation((key: string, value: string) => {
+      if (key === 'registeredUsers') {
+        storedUsers = JSON.parse(value)
+      }
+    })
+    
+    // First register/login with a new user
     await auth.login({
-      email: 'test@example.com',
+      email: testEmail,
       password: 'TestPassword123!@',
       receiveUpdates: true
     })
 
-    // Clear previous calls
+    // Clear previous calls to focus on the updatePreferences call
     mockLocalStorage.setItem.mockClear()
+    
+    // Reset the mock to capture new calls while still returning stored data
+    mockLocalStorage.setItem.mockImplementation((key: string, value: string) => {
+      // Keep track of all setItem calls for verification
+      if (key === 'registeredUsers') {
+        storedUsers = JSON.parse(value)
+      }
+    })
 
-    // Update preferences
+    // Update preferences to false
     await auth.updatePreferences(false)
 
     // Verify new token was stored with updated preferences
     expect(mockLocalStorage.setItem).toHaveBeenCalledWith('vet_auth_token', expect.any(String))
+    
+    // Verify that registeredUsers was also updated
+    const registeredUsersCall = mockLocalStorage.setItem.mock.calls.find(call => call[0] === 'registeredUsers')
+    expect(registeredUsersCall).toBeDefined()
+    
+    if (registeredUsersCall) {
+      const updatedUsers = JSON.parse(registeredUsersCall[1])
+      const updatedUser = updatedUsers.find((user: any) => user.email === testEmail)
+      expect(updatedUser.receiveUpdates).toBe(false)
+    }
   })
 })
