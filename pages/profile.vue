@@ -62,7 +62,7 @@
         <div class="profile-section">
           <div class="section-title">
             <h2>
-              <nord-icon name="interface-sort-up-small" size="s"></nord-icon>
+              <nord-icon name="generic-module" size="s"></nord-icon>
               Update Preferences
             </h2>
           </div>
