@@ -111,7 +111,6 @@
         <!-- Success message -->
         <div v-if="updateMessage" class="update-message">
           <nord-banner variant="success" class="success-banner">
-            <nord-icon name="interface-checked-circle" size="s"></nord-icon>
             {{ updateMessage }}
           </nord-banner>
         </div>
