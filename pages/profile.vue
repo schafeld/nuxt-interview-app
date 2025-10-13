@@ -47,7 +47,7 @@
                     <span class="detail-label">Product Updates:</span>
                     <nord-badge :variant="userData.receiveUpdates ? 'success' : 'neutral'">
                       <nord-icon 
-                        :name="userData.receiveUpdates ? 'interface-tick-circle' : 'interface-remove-circle'" 
+                        :name="userData.receiveUpdates ? 'interface-checked-circle' : 'interface-close-small'" 
                         size="xs"
                       ></nord-icon>
                       {{ userData.receiveUpdates ? 'Enabled' : 'Disabled' }}
@@ -90,7 +90,7 @@
         <div class="profile-section">
           <div class="section-title">
             <h2>
-              <nord-icon name="interface-security-shield" size="s"></nord-icon>
+              <nord-icon name="interface-shield" size="s"></nord-icon>
               Account Actions
             </h2>
           </div>
@@ -111,7 +111,7 @@
         <!-- Success message -->
         <div v-if="updateMessage" class="update-message">
           <nord-banner variant="success" class="success-banner">
-            <nord-icon name="interface-tick-circle" size="s"></nord-icon>
+            <nord-icon name="interface-checked-circle" size="s"></nord-icon>
             {{ updateMessage }}
           </nord-banner>
         </div>
