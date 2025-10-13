@@ -1,0 +1,224 @@
+/* assets/css/mobile-enhancements.css */
+
+/* Touch-friendly button and input sizing */
+.mobile-touch-target {
+  min-height: 44px; /* iOS recommended touch target size */
+  min-width: 44px;
+}
+
+/* Improved form layouts for mobile */
+@media (max-width: 768px) {
+  /* Form field spacing */
+  .form-field {
+    margin-bottom: var(--n-space-l);
+  }
+  
+  /* Larger touch targets for checkboxes */
+  nord-checkbox {
+    --n-checkbox-size: 24px;
+  }
+  
+  /* Better button spacing */
+  .form-actions {
+    gap: var(--n-space-m) !important;
+    flex-direction: column;
+  }
+  
+  .form-actions nord-button {
+    width: 100%;
+    min-height: 48px;
+  }
+  
+  /* Password requirements layout */
+  .password-requirements {
+    margin-top: var(--n-space-s);
+  }
+  
+  .requirements-list {
+    grid-template-columns: 1fr;
+    gap: var(--n-space-xs);
+  }
+  
+  /* Card padding adjustments */
+  .signup-card,
+  .profile-card,
+  .success-card {
+    margin: var(--n-space-s);
+  }
+  
+  .card-header,
+  .profile-content,
+  .success-content {
+    padding: var(--n-space-l) !important;
+  }
+}
+
+/* Small mobile devices (phones in portrait) */
+@media (max-width: 480px) {
+  /* Even more compact layouts */
+  .card-header,
+  .profile-content,
+  .success-content {
+    padding: var(--n-space-m) !important;
+  }
+  
+  /* Smaller font sizes for headers on very small screens */
+  .card-title h1,
+  .profile-title,
+  .success-title {
+    font-size: var(--n-font-size-l) !important;
+  }
+  
+  /* Stack profile details vertically */
+  .profile-details {
+    flex-direction: column;
+    gap: var(--n-space-s);
+  }
+  
+  .detail-row {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--n-space-xs);
+  }
+  
+  /* Footer adjustments */
+  .footer-content {
+    font-size: var(--n-font-size-xs);
+    gap: var(--n-space-xs);
+  }
+  
+  .footer-note {
+    flex-direction: column;
+    gap: var(--n-space-xs);
+    text-align: center;
+  }
+}
+
+/* Landscape orientation adjustments for mobile */
+@media (max-height: 600px) and (orientation: landscape) {
+  /* Reduce vertical spacing in landscape mode */
+  .signup-container,
+  .profile-container,
+  .success-container {
+    padding: var(--n-space-s) var(--n-space-m);
+    align-items: flex-start;
+    padding-top: var(--n-space-m);
+  }
+  
+  /* More compact card headers */
+  .card-header {
+    padding: var(--n-space-m) var(--n-space-l) var(--n-space-s) var(--n-space-l) !important;
+  }
+  
+  /* Reduce password requirements spacing */
+  .password-requirements {
+    margin-top: var(--n-space-xs);
+  }
+  
+  .requirements-banner {
+    padding: var(--n-space-s) !important;
+  }
+}
+
+/* High DPI / Retina display optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  /* Ensure crisp borders and shadows */
+  .signup-card,
+  .profile-card,
+  .success-card,
+  .error-card {
+    border: 0.5px solid var(--n-color-border);
+  }
+}
+
+/* Accessibility: Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Dark mode improvements for mobile */
+@media (prefers-color-scheme: dark) {
+  /* Ensure good contrast on mobile displays */
+  .form-field nord-input {
+    --n-input-background: var(--n-color-surface-raised);
+  }
+  
+  /* Better focus visibility in dark mode */
+  .skip-link:focus,
+  nord-button:focus,
+  nord-input:focus-within {
+    outline: 2px solid var(--n-color-interactive);
+    outline-offset: 2px;
+  }
+}
+
+/* Improved focus styles for keyboard navigation */
+.keyboard-focus nord-button:focus,
+.keyboard-focus nord-input:focus-within,
+.keyboard-focus nord-checkbox:focus-within,
+.keyboard-focus .password-toggle:focus {
+  outline: 2px solid var(--n-color-interactive);
+  outline-offset: 2px;
+  border-radius: var(--n-border-radius);
+}
+
+/* Better touch feedback */
+@media (hover: none) and (pointer: coarse) {
+  /* Remove hover states on touch devices */
+  nord-button:hover,
+  .profile-button:hover,
+  .author-link:hover {
+    /* Disable hover effects on touch devices */
+    opacity: 1;
+    text-decoration: none;
+  }
+  
+  /* Add touch feedback */
+  nord-button:active,
+  .profile-button:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+}
+
+/* Improved text selection and copy behavior */
+.detail-value,
+.profile-email,
+.success-email {
+  user-select: text;
+  cursor: text;
+}
+
+/* Better form validation display on mobile */
+@media (max-width: 768px) {
+  .error-message {
+    font-size: var(--n-font-size-s);
+    margin-top: var(--n-space-xs);
+  }
+  
+  /* Validation icons sizing */
+  .requirements-list nord-icon {
+    min-width: 16px;
+    min-height: 16px;
+  }
+}
+
+/* Safe area insets for devices with notches */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .app-header {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .app-main {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  
+  .app-footer {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}

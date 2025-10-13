@@ -83,17 +83,16 @@ definePageMeta({
   middleware: 'signup'
 })
 
+// Composables
+const { user, initializeAuth } = useAuth()
+
 // State
-const signupData = ref<any>(null)
+const signupData = computed(() => user.value)
 
 // Lifecycle
-onMounted(() => {
-  if (process.client) {
-    const data = sessionStorage.getItem('signupData')
-    if (data) {
-      signupData.value = JSON.parse(data)
-    }
-  }
+onMounted(async () => {
+  // Initialize auth to load user data from JWT
+  await initializeAuth()
 })
 
 // Methods
@@ -101,10 +100,13 @@ const formatDate = (timestamp: string): string => {
   return new Date(timestamp).toLocaleString()
 }
 
-const startOver = () => {
-  if (process.client) {
-    sessionStorage.removeItem('signupCompleted')
-    sessionStorage.removeItem('signupData')
+const startOver = async () => {
+  // Sign out current user using JWT system
+  const { logout } = useAuth()
+  try {
+    await logout()
+  } catch (error) {
+    console.error('Logout failed:', error)
   }
   navigateTo('/')
 }

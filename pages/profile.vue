@@ -147,8 +147,10 @@ definePageMeta({
   middleware: 'auth'
 })
 
+// Composables
+const { user, isAuthenticated, initializeAuth, updatePreferences: updateUserPreferences, logout } = useAuth()
+
 // State
-const userData = ref<any>(null)
 const isUpdating = ref(false)
 const updateMessage = ref('')
 
@@ -156,21 +158,16 @@ const form = reactive({
   receiveUpdates: false
 })
 
-// Lifecycle
-onMounted(() => {
-  loadUserData()
-})
+// Computed
+const userData = computed(() => user.value)
 
-// Methods
-const loadUserData = () => {
-  if (process.client) {
-    const data = sessionStorage.getItem('signupData')
-    if (data) {
-      userData.value = JSON.parse(data)
-      form.receiveUpdates = userData.value.receiveUpdates
-    }
+// Lifecycle
+onMounted(async () => {
+  await initializeAuth()
+  if (user.value) {
+    form.receiveUpdates = user.value.receiveUpdates
   }
-}
+})
 
 const formatDate = (timestamp: string): string => {
   return new Date(timestamp).toLocaleString()
@@ -186,27 +183,15 @@ const updatePreferences = async () => {
   updateMessage.value = ''
   
   try {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    // Use the JWT auth system to update preferences
+    await updateUserPreferences(form.receiveUpdates)
     
-    // Update stored data
-    if (process.client && userData.value) {
-      const updatedData = {
-        ...userData.value,
-        receiveUpdates: form.receiveUpdates,
-        lastUpdated: new Date().toISOString()
-      }
-      
-      sessionStorage.setItem('signupData', JSON.stringify(updatedData))
-      userData.value = updatedData
-      
-      updateMessage.value = 'Preferences updated successfully!'
-      
-      // Clear message after 3 seconds
-      setTimeout(() => {
-        updateMessage.value = ''
-      }, 3000)
-    }
+    updateMessage.value = 'Preferences updated successfully!'
+    
+    // Clear message after 3 seconds
+    setTimeout(() => {
+      updateMessage.value = ''
+    }, 3000)
   } catch (error) {
     updateMessage.value = 'Error updating preferences. Please try again.'
   } finally {
@@ -214,20 +199,26 @@ const updatePreferences = async () => {
   }
 }
 
-const signOut = () => {
-  if (process.client) {
-    sessionStorage.removeItem('signupCompleted')
-    sessionStorage.removeItem('signupData')
+const signOut = async () => {
+  try {
+    await logout()
+    navigateTo('/')
+  } catch (error) {
+    console.error('Sign out failed:', error)
+    // Force navigation anyway
+    navigateTo('/')
   }
-  navigateTo('/')
 }
 
-const clearData = () => {
+const clearData = async () => {
   if (confirm('Are you sure you want to clear all your account data? This action cannot be undone.')) {
-    if (process.client) {
-      sessionStorage.clear()
+    try {
+      await logout()
+      navigateTo('/')
+    } catch (error) {
+      console.error('Clear data failed:', error)
+      navigateTo('/')
     }
-    navigateTo('/')
   }
 }
 

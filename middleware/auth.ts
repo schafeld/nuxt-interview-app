@@ -1,15 +1,20 @@
 // middleware/auth.ts
-export default defineNuxtRouteMiddleware((to) => {
-  // Client-side: check session storage
+export default defineNuxtRouteMiddleware(async (to) => {
+  // Client-side: check JWT authentication
   if (process.client) {
-    const hasCompletedSignup = sessionStorage.getItem('signupCompleted')
-    const hasUserData = sessionStorage.getItem('signupData')
+    const { isAuthenticated, initializeAuth } = useAuth()
     
-    if (!hasCompletedSignup || !hasUserData) {
+    // Initialize auth state if not already done
+    if (!isAuthenticated.value) {
+      await initializeAuth()
+    }
+    
+    // Check if user is authenticated
+    if (!isAuthenticated.value) {
       return navigateTo('/')
     }
   }
   
-  // Server-side in SPA mode: allow access since we can't check session storage
+  // Server-side in SPA mode: allow access since we can't check localStorage
   // The client-side check will handle redirection if needed
 })

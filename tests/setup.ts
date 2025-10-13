@@ -1,39 +1,131 @@
 // tests/setup.ts
 import { vi } from 'vitest'
 
-// Mock Nuxt runtime config
-global.useRuntimeConfig = vi.fn(() => ({
-  public: {
-    passwordConfig: {
-      minLength: 12,
-      requireUppercase: true,
-      requireLowercase: true,
-      requireNumbers: true,
-      requireSpecialChars: true,
-      minSpecialChars: 2
-    }
-  }
-}))
+// Mock Vue reactivity functions for testing
+Object.defineProperty(globalThis, 'reactive', {
+  value: vi.fn((obj) => {
+    // Create a proper reactive-like object for testing
+    return new Proxy(obj, {
+      get(target, prop) {
+        return target[prop]
+      },
+      set(target, prop, value) {
+        target[prop] = value
+        return true
+      }
+    })
+  }),
+  writable: true
+})
 
-// Mock usePasswordValidation composable
-global.usePasswordValidation = vi.fn(() => ({
-  validatePassword: (password: string) => {
-    const errors: string[] = []
-    if (password.length < 12) errors.push('Password must be at least 12 characters long')
-    if (!/[A-Z]/.test(password)) errors.push('Password must contain at least one uppercase letter')
-    if (!/[a-z]/.test(password)) errors.push('Password must contain at least one lowercase letter')
-    if (!/\d/.test(password)) errors.push('Password must contain at least one number')
-    if ((password.match(/[!@#$%^&*(),.?":{}|<>]/g) || []).length < 2) {
-      errors.push('Password must contain at least 2 special characters')
+Object.defineProperty(globalThis, 'ref', {
+  value: vi.fn((val) => ({ value: val })),
+  writable: true
+})
+
+Object.defineProperty(globalThis, 'computed', {
+  value: vi.fn((fn) => ({ 
+    value: typeof fn === 'function' ? fn() : fn 
+  })),
+  writable: true
+})
+
+Object.defineProperty(globalThis, 'watch', {
+  value: vi.fn(),
+  writable: true
+})
+
+Object.defineProperty(globalThis, 'watchEffect', {
+  value: vi.fn(),
+  writable: true
+})
+
+Object.defineProperty(globalThis, 'onMounted', {
+  value: vi.fn(),
+  writable: true
+})
+
+Object.defineProperty(globalThis, 'onBeforeUnmount', {
+  value: vi.fn(),
+  writable: true
+})
+
+Object.defineProperty(globalThis, 'toRefs', {
+  value: vi.fn((obj) => {
+    const refs: Record<string, any> = {}
+    Object.keys(obj).forEach(key => {
+      refs[key] = { value: obj[key] }
+    })
+    return refs
+  }),
+  writable: true
+})
+
+Object.defineProperty(globalThis, 'readonly', {
+  value: vi.fn((val) => val),
+  writable: true
+})
+
+Object.defineProperty(globalThis, 'useState', {
+  value: vi.fn((key, defaultValue) => ({ value: defaultValue() })),
+  writable: true
+})
+
+Object.defineProperty(globalThis, 'navigateTo', {
+  value: vi.fn(),
+  writable: true
+})
+
+Object.defineProperty(globalThis, 'useRoute', {
+  value: vi.fn(() => ({ path: '/' })),
+  writable: true
+})
+
+Object.defineProperty(globalThis, 'useRuntimeConfig', {
+  value: vi.fn(() => ({
+    public: {
+      passwordConfig: {
+        minLength: 12,
+        requireUppercase: true,
+        requireLowercase: true,
+        requireNumbers: true,
+        requireSpecialChars: true,
+        minSpecialChars: 2
+      }
     }
-    return errors
-  }
-}))
+  })),
+  writable: true
+})
 
 // Mock process.client
-Object.defineProperty(global, 'process', {
-  value: {
-    client: true,
-    env: process.env
-  }
+Object.defineProperty(globalThis, 'process', {
+  value: { client: true },
+  writable: true
+})
+
+// Mock usePasswordValidation composable
+Object.defineProperty(globalThis, 'usePasswordValidation', {
+  value: vi.fn(() => ({
+    validatePassword: (password: string) => {
+      const errors: string[] = []
+      if (password.length < 12) {
+        errors.push('Password must be at least 12 characters long')
+      }
+      if (!/[A-Z]/.test(password)) {
+        errors.push('Password must contain at least one uppercase letter')
+      }
+      if (!/[a-z]/.test(password)) {
+        errors.push('Password must contain at least one lowercase letter')
+      }
+      if (!/\d/.test(password)) {
+        errors.push('Password must contain at least one number')
+      }
+      const specialCount = (password.match(/[!@#$%^&*(),.?":{}|<>]/g) || []).length
+      if (specialCount < 2) {
+        errors.push('Password must contain at least 2 special characters')
+      }
+      return errors
+    }
+  })),
+  writable: true
 })

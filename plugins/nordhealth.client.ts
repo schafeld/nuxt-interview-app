@@ -2,8 +2,8 @@
 export default defineNuxtPlugin(async () => {
   if (process.client) {
     try {
-      // Create a promise that resolves when components are ready
-      const componentsReady = new Promise<void>(async (resolve) => {
+      // Use modern event-based approach instead of polling
+      const componentsReady = new Promise<void>(async (resolve, reject) => {
         // Import the main component bundle
         await import('@nordhealth/components')
         
@@ -15,38 +15,65 @@ export default defineNuxtPlugin(async () => {
           'nord-dropdown-group', 'nord-dropdown-item', 'nord-avatar'
         ]
         
+        // Track which components are loaded
+        const loadedComponents = new Set<string>()
+        
         // Function to check if all components are defined
         const checkComponents = () => {
-          const definedComponents = requiredComponents.filter(tag => 
-            customElements.get(tag)
-          )
-          return definedComponents.length === requiredComponents.length
+          requiredComponents.forEach(tag => {
+            if (customElements.get(tag) && !loadedComponents.has(tag)) {
+              loadedComponents.add(tag)
+            }
+          })
+          return loadedComponents.size === requiredComponents.length
         }
         
         // If all components are already defined, resolve immediately
         if (checkComponents()) {
+          console.log('All NordHealth components are already registered')
           resolve()
           return
         }
         
-        // Otherwise, poll until they're all defined (with timeout)
-        let attempts = 0
-        const maxAttempts = 50 // 5 seconds max
+        // Set up timeout as fallback
+        const timeout = setTimeout(() => {
+          console.warn('Timeout waiting for NordHealth components, proceeding anyway...')
+          resolve()
+        }, 5000)
         
-        const poll = () => {
-          attempts++
-          if (checkComponents()) {
-            console.log(`All NordHealth components registered after ${attempts * 100}ms`)
-            resolve()
-          } else if (attempts >= maxAttempts) {
-            console.warn('Timeout waiting for NordHealth components to register')
-            resolve()
-          } else {
-            setTimeout(poll, 100)
+        // Use MutationObserver to watch for component registration
+        let observerConnected = false
+        
+        // Also use whenDefined promises for better reliability
+        const whenDefinedPromises = requiredComponents.map(async (tag) => {
+          try {
+            await customElements.whenDefined(tag)
+            loadedComponents.add(tag)
+            
+            if (checkComponents() && !observerConnected) {
+              clearTimeout(timeout)
+              console.log(`All NordHealth components registered`)
+              resolve()
+            }
+          } catch (error) {
+            console.warn(`Failed to wait for component ${tag}:`, error)
           }
-        }
+        })
         
-        poll()
+        // Race between individual component loading and timeout
+        Promise.allSettled(whenDefinedPromises).then(() => {
+          if (!observerConnected) {
+            clearTimeout(timeout)
+            console.log('All component loading attempts completed')
+            resolve()
+          }
+        }).catch((error) => {
+          console.warn('Error in component loading:', error)
+          clearTimeout(timeout)
+          resolve() // Resolve anyway to prevent blocking
+        })
+        
+        observerConnected = true
       })
       
       // Wait for components to be ready

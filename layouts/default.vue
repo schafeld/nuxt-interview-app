@@ -48,8 +48,13 @@
     
     <!-- Main Content -->
     <main id="main-content" class="app-main" role="main" tabindex="-1">
-      <slot />
+      <ErrorBoundary>
+        <slot />
+      </ErrorBoundary>
     </main>
+    
+    <!-- Global Loading Overlay -->
+    <GlobalLoading />
     
     <!-- Nord Footer -->
     <nord-footer class="app-footer" role="contentinfo">
@@ -66,38 +71,28 @@
 </template>
 
 <script setup lang="ts">
-// State
-const isSignedIn = ref(false)
-const userEmail = ref('')
+// Auth state using new auth composable
+const { isAuthenticated, user, initializeAuth, logout } = useAuth()
+const { setGlobalLoading } = useGlobalLoading()
+
+// Computed values
+const isSignedIn = computed(() => isAuthenticated.value)
+const userEmail = computed(() => user.value?.email || '')
 
 // Lifecycle
-onMounted(() => {
-  checkSigninStatus()
-})
-
-// Watch for route changes to update signin status
-watch(() => useRoute().path, () => {
-  checkSigninStatus()
-})
-
-// Methods
-const checkSigninStatus = () => {
+onMounted(async () => {
   if (process.client) {
-    const hasCompleted = sessionStorage.getItem('signupCompleted')
-    const userData = sessionStorage.getItem('signupData')
-    
-    isSignedIn.value = !!hasCompleted && !!userData
-    
-    if (userData) {
-      try {
-        const parsedData = JSON.parse(userData)
-        userEmail.value = parsedData.email || ''
-      } catch (error) {
-        userEmail.value = ''
-      }
-    }
+    await initializeAuth()
   }
-}
+})
+
+// Watch for route changes to refresh token if needed
+watch(() => useRoute().path, async () => {
+  if (process.client && isAuthenticated.value) {
+    const { refreshTokenIfNeeded } = useAuth()
+    await refreshTokenIfNeeded()
+  }
+})
 
 const navigateToProfile = () => {
   navigateTo('/profile')
@@ -116,13 +111,15 @@ const handleSkipLink = (event: Event) => {
   })
 }
 
-const signOut = () => {
-  if (process.client) {
-    sessionStorage.removeItem('signupCompleted')
-    sessionStorage.removeItem('signupData')
-    isSignedIn.value = false
-    userEmail.value = ''
-    navigateTo('/')
+const signOut = async () => {
+  try {
+    setGlobalLoading(true, 'Signing out...')
+    await logout()
+    await navigateTo('/')
+  } catch (error) {
+    console.error('Sign out failed:', error)
+  } finally {
+    setGlobalLoading(false)
   }
 }
 </script>

@@ -1,9 +1,12 @@
 // middleware/signup.ts
-export default defineNuxtRouteMiddleware((to) => {
+export default defineNuxtRouteMiddleware(async (to) => {
   if (process.client) {
-    const hasCompletedSignup = sessionStorage.getItem('signupCompleted')
+    const { isAuthenticated, initializeAuth } = useAuth()
     
-    if (to.path === '/success' && !hasCompletedSignup) {
+    // Initialize auth state if needed
+    await initializeAuth()
+    
+    if (to.path === '/success' && !isAuthenticated.value) {
       return navigateTo('/')
     }
   }

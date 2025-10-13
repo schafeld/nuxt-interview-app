@@ -258,6 +258,7 @@ const showExistingUserMessage = ref(false)
 
 // Composables
 const { validateForm, validateEmail } = useFormValidation()
+const { login } = useAuth()
 const config = useRuntimeConfig()
 const passwordConfig = config.public.passwordConfig
 
@@ -437,14 +438,18 @@ const handleSubmit = async () => {
       }
     }
     
-    // Store signup completion in session storage
-    if (process.client) {
-      sessionStorage.setItem('signupCompleted', 'true')
-      sessionStorage.setItem('signupData', JSON.stringify({
+    // Authenticate user with JWT
+    try {
+      await login({
         email: form.email,
-        receiveUpdates: form.receiveUpdates,
-        timestamp: new Date().toISOString()
-      }))
+        password: form.password,
+        receiveUpdates: form.receiveUpdates
+      })
+      console.log('Login successful, navigating to success page')
+    } catch (loginError) {
+      console.error('Login failed:', loginError)
+      errors.value = [{ field: 'general', message: 'Authentication failed. Please try again.' }]
+      return
     }
     
     // Navigate to success page

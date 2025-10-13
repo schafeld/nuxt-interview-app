@@ -1,6 +1,7 @@
 // tests/e2e/accessibility.spec.ts
 import { test, expect } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
+import { navigateAndWaitForComponents } from './utils/page-helpers'
 
 test.describe('Accessibility Tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -18,8 +19,7 @@ test.describe('Accessibility Tests', () => {
   })
 
   test('signup page should not have accessibility violations', async ({ page }) => {
-    await page.goto('/')
-    await page.waitForSelector('nord-card', { timeout: 10000 })
+    await navigateAndWaitForComponents(page, '/')
     
     const accessibilityScanResults = await new AxeBuilder({ page })
       .exclude('#nuxt-devtools-container')
@@ -30,8 +30,7 @@ test.describe('Accessibility Tests', () => {
   })
 
   test('success page should not have accessibility violations', async ({ page }) => {
-    await page.goto('/')
-    await page.waitForSelector('nord-card', { timeout: 10000 })
+    await navigateAndWaitForComponents(page, '/')
     
     // Fill out the form with valid data
     const emailInput = page.locator('nord-input').filter({ hasText: 'Email Address' }).locator('input')
@@ -66,8 +65,7 @@ test.describe('Accessibility Tests', () => {
 
   test('profile page should not have accessibility violations', async ({ page }) => {
     // Navigate directly to profile page since signup flow is complex
-    await page.goto('/profile')
-    await page.waitForSelector('nord-card', { timeout: 10000 })
+    await navigateAndWaitForComponents(page, '/profile')
     
     const accessibilityScanResults = await new AxeBuilder({ page })
       .exclude('#nuxt-devtools-container')
@@ -78,8 +76,7 @@ test.describe('Accessibility Tests', () => {
   })
 
   test('skip link functionality', async ({ page }) => {
-    await page.goto('/')
-    await page.waitForSelector('nord-card', { timeout: 10000 })
+    await navigateAndWaitForComponents(page, '/')
     
     // Focus on skip link and activate it
     const skipLink = page.locator('.skip-link')
@@ -103,10 +100,10 @@ test.describe('Accessibility Tests', () => {
   })
 
   test('form validation messages are announced to screen readers', async ({ page }) => {
-    await page.goto('/')
-    await page.waitForSelector('nord-card', { timeout: 10000 })
+    await navigateAndWaitForComponents(page, '/')
     
     // Submit empty form to trigger validation
+    await page.waitForSelector('nord-button[type="submit"]', { state: 'visible' })
     const submitButton = page.locator('nord-button[type="submit"]')
     await submitButton.click({ force: true })
     

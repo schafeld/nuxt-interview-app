@@ -29,6 +29,10 @@
     "@nordhealth/components": "^2.0.0",
     "@nordhealth/css": "^4.1.0",
     "@nordhealth/icons": "^3.11.0",
-    "@nordhealth/themes": "^9.0.0"
+    "@nordhealth/themes": "^9.0.0",
+    "@vueuse/core": "^13.9.0",
+    "jose": "^6.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "zod": "^4.1.12"
   }
 }
