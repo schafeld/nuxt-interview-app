@@ -186,12 +186,10 @@
           <nord-banner variant="danger" class="error-banner">
             <div class="error-content">
               <div class="error-title">
-                <nord-icon name="interface-alert-triangle" size="s"></nord-icon>
                 Please fix the following errors:
               </div>
               <ul class="error-list">
                 <li v-for="error in errors" :key="`${error.field}-${error.message}`">
-                  <nord-icon name="interface-dot" size="xs"></nord-icon>
                   {{ error.message }}
                 </li>
               </ul>
