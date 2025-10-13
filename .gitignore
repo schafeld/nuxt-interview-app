@@ -38,8 +38,11 @@ coverage/
 # Static generated files
 static/dist/
 
-# Ignore Playwright repors
+# Ignore Playwright reports
 playwright-report/
 test-results/
 test-results/*
 test-results/**/*
+
+playwright-report/index.html
+test-results/.last-run.json
