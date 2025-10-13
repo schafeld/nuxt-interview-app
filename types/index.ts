@@ -5,6 +5,13 @@ export interface SignupForm {
   receiveUpdates: boolean
 }
 
+export interface StoredUser {
+  email: string
+  encryptedPassword: string
+  receiveUpdates: boolean
+  timestamp: string
+}
+
 export interface PasswordConfig {
   minLength: number
   requireUppercase: boolean

@@ -1,6 +1,6 @@
 // composables/useAuth.ts
 import { SignJWT, jwtVerify } from 'jose'
-import type { SignupForm } from '~/types'
+import type { SignupForm, StoredUser } from '~/types'
 
 interface UserData {
   id: string
@@ -73,19 +73,77 @@ export const useAuth = () => {
     }
   }
 
-  // Login with signup form data (simulated)
-  const login = async (formData: SignupForm): Promise<void> => {
+  // Helper function to get registered users from localStorage
+  const getRegisteredUsers = (): StoredUser[] => {
+    if (!process.client) return []
+    
+    try {
+      const storedUsers = localStorage.getItem('registeredUsers')
+      if (storedUsers) {
+        const parsed = JSON.parse(storedUsers)
+        // Handle migration from old array format to new object format
+        if (Array.isArray(parsed) && typeof parsed[0] === 'string') {
+          return [] // Clear old format, users will need to re-register
+        }
+        return parsed as StoredUser[]
+      }
+    } catch (error) {
+      console.warn('Could not load stored users:', error)
+    }
+    return []
+  }
+
+  // Helper function to save registered users to localStorage
+  const saveRegisteredUsers = (users: StoredUser[]): void => {
+    if (!process.client) return
+    
+    try {
+      localStorage.setItem('registeredUsers', JSON.stringify(users))
+    } catch (error) {
+      console.warn('Could not save registered users:', error)
+    }
+  }
+
+  // Check if user exists and return user data
+  const findRegisteredUser = (email: string): StoredUser | null => {
+    const users = getRegisteredUsers()
+    return users.find(user => user.email.toLowerCase() === email.toLowerCase()) || null
+  }
+
+  // Remove user from registered users (for clear account data)
+  const removeRegisteredUser = (email: string): void => {
+    if (!process.client) return
+    
+    const users = getRegisteredUsers()
+    const filteredUsers = users.filter(user => user.email.toLowerCase() !== email.toLowerCase())
+    saveRegisteredUsers(filteredUsers)
+  }
+
+  // Sign in existing user
+  const signIn = async (email: string, password: string): Promise<{ success: boolean, error?: string }> => {
     state.loading = true
     
     try {
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1000))
       
+      const registeredUser = findRegisteredUser(email)
+      
+      if (!registeredUser) {
+        return { success: false, error: 'No account found with this email address.' }
+      }
+      
+      // Verify password using encryption utility
+      const { verifyPassword } = useEncryption()
+      if (!verifyPassword(password, registeredUser.encryptedPassword)) {
+        return { success: false, error: 'Incorrect password. Please try again or request a password reset.' }
+      }
+      
       const userData: UserData = {
         id: crypto.randomUUID(),
-        email: formData.email,
-        receiveUpdates: formData.receiveUpdates,
-        timestamp: new Date().toISOString()
+        email: registeredUser.email,
+        receiveUpdates: registeredUser.receiveUpdates,
+        timestamp: registeredUser.timestamp
       }
 
       const token = await createToken(userData)
@@ -98,11 +156,76 @@ export const useAuth = () => {
       state.user = userData
       state.token = token
       state.isAuthenticated = true
+      
+      return { success: true }
     } catch (error) {
-      console.error('Login failed:', error)
-      throw error
+      console.error('Sign in failed:', error)
+      return { success: false, error: 'Sign in failed. Please try again.' }
     } finally {
       state.loading = false
+    }
+  }
+
+  // Register new user
+  const register = async (formData: SignupForm): Promise<{ success: boolean, error?: string }> => {
+    state.loading = true
+    
+    try {
+      // Check if user already exists
+      const existingUser = findRegisteredUser(formData.email)
+      if (existingUser) {
+        return { success: false, error: 'An account with this email already exists.' }
+      }
+      
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      // Encrypt password and store user
+      const { encrypt } = useEncryption()
+      const newUser: StoredUser = {
+        email: formData.email.toLowerCase(),
+        encryptedPassword: encrypt(formData.password),
+        receiveUpdates: formData.receiveUpdates,
+        timestamp: new Date().toISOString()
+      }
+      
+      // Save to localStorage
+      const users = getRegisteredUsers()
+      users.push(newUser)
+      saveRegisteredUsers(users)
+      
+      // Create user session
+      const userData: UserData = {
+        id: crypto.randomUUID(),
+        email: formData.email,
+        receiveUpdates: formData.receiveUpdates,
+        timestamp: newUser.timestamp
+      }
+
+      const token = await createToken(userData)
+      
+      if (process.client) {
+        localStorage.setItem(TOKEN_KEY, token)
+      }
+
+      state.user = userData
+      state.token = token
+      state.isAuthenticated = true
+      
+      return { success: true }
+    } catch (error) {
+      console.error('Registration failed:', error)
+      return { success: false, error: 'Registration failed. Please try again.' }
+    } finally {
+      state.loading = false
+    }
+  }
+
+  // Login with signup form data (simulated) - kept for backward compatibility
+  const login = async (formData: SignupForm): Promise<void> => {
+    const result = await register(formData)
+    if (!result.success) {
+      throw new Error(result.error || 'Login failed')
     }
   }
 
@@ -130,6 +253,17 @@ export const useAuth = () => {
     } finally {
       state.loading = false
     }
+  }
+
+  // Clear account data - removes user from registered users and logs out
+  const clearAccountData = async (): Promise<void> => {
+    if (state.user) {
+      // Remove user from registered users
+      removeRegisteredUser(state.user.email)
+    }
+    
+    // Then logout
+    await logout()
   }
 
   // Update user preferences
@@ -271,10 +405,14 @@ export const useAuth = () => {
     
     // Methods
     login,
+    signIn,
+    register,
     logout,
+    clearAccountData,
     updatePreferences,
     initializeAuth,
     refreshTokenIfNeeded,
+    findRegisteredUser,
     
     // Computed
     user: computed(() => state.user),

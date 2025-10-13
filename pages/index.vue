@@ -10,6 +10,7 @@
         </div>
         <div class="card-subtitle">
           <p>Join our platform to access professional veterinary tools and resources</p>
+          <p>If you already have an account, log in with your credentials.</p>
         </div>
       </header>
       
@@ -165,15 +166,20 @@
         <!-- Submit Button -->
         <nord-button
           type="submit"
-          :disabled="!isFormValid || isSubmitting"
+          :disabled="!isFormValid || isSubmitting || !form.email || !form.password"
           :loading="isSubmitting"
           :aria-describedby="!isFormValid ? 'form-validation-status' : undefined"
           size="l"
           class="submit-button"
         >
           <nord-icon name="user-add" size="s" slot="start"></nord-icon>
-          {{ isSubmitting ? 'Creating Account...' : 'Sign Up' }}
+          {{ isSubmitting ? 'Processing...' : 'Sign Up' }}
         </nord-button>
+
+        <p>
+          Have you forgotten your password? <a href="#" @click.prevent="resetPassword" role="button" class="reset-password-link">Reset password</a>
+        </p>
+
         
         <!-- Error Messages -->
         <div v-if="errors.length > 0" class="error-messages">
@@ -192,45 +198,46 @@
             </div>
           </nord-banner>
         </div>
-        
-        <!-- Existing User Message -->
-        <div v-if="showExistingUserMessage" class="existing-user-message">
-          <nord-banner variant="warning" class="existing-user-banner">
-            <div class="existing-user-content">
-              <div class="existing-user-title">
-                <nord-icon name="user-single" size="s"></nord-icon>
-                Account Already Exists
-              </div>
-              <p class="existing-user-text">
-                It looks like you already have an account with the email <strong>{{ form.email }}</strong>.
-              </p>
-              <p class="existing-user-question">
-                Did you forget your password?
-              </p>
-              <div class="existing-user-actions">
-                <nord-button
-                  variant="primary"
-                  size="s"
-                  @click="handlePasswordReset"
-                  class="reset-button"
-                >
-                  <nord-icon name="interface-email-action-send" size="s" slot="start"></nord-icon>
-                  Send Password Reset Email
-                </nord-button>
-                <nord-button
-                  variant="plain"
-                  size="s"
-                  @click="dismissExistingUserMessage"
-                  class="dismiss-button"
-                >
-                  Use Different Email
-                </nord-button>
-              </div>
-            </div>
-          </nord-banner>
-        </div>
+
       </form>
     </nord-card>
+
+    <!-- Reset Password Modal -->
+    <nord-modal
+      v-if="showResetModal"
+      @close="closeResetModal"
+      :open="showResetModal"
+      aria-labelledby="reset-modal-title"
+      size="s"
+    >
+      <h2 slot="header" id="reset-modal-title">
+        <nord-icon name="interface-email-action-send" size="s" aria-hidden="true"></nord-icon>
+        Password Reset Email Sent
+      </h2>
+      
+      <div class="reset-modal-content">
+        <nord-banner variant="success" class="reset-success-banner">
+          <div class="reset-success-content">
+            <div class="reset-success-text">
+              <p class="reset-success-title">Reset link sent successfully!</p>
+              <p class="reset-success-description">
+                We've sent a password reset link to <strong>{{ form.email }}</strong>. Please check your inbox and follow the instructions to reset your password.
+              </p>
+              <p class="reset-success-note">
+                <strong>Note:</strong> The email may take a few minutes to arrive. Don't forget to check your spam folder if you don't see it in your inbox.
+              </p>
+            </div>
+          </div>
+        </nord-banner>
+      </div>
+      
+      <div slot="footer" class="reset-modal-footer">
+        <nord-button variant="primary" @click="closeResetModal">
+          <nord-icon name="interface-checked" size="s" slot="start"></nord-icon>
+          Got it
+        </nord-button>
+      </div>
+    </nord-modal>
   </div>
 </template>
 
@@ -254,11 +261,11 @@ const isSubmitting = ref(false)
 const errors = ref<ValidationError[]>([])
 const passwordToggleButton = ref<HTMLElement | null>(null)
 const emailTouched = ref(false)
-const showExistingUserMessage = ref(false)
+const showResetModal = ref(false)
 
 // Composables
 const { validateForm, validateEmail } = useFormValidation()
-const { login } = useAuth()
+const { signIn, register, findRegisteredUser } = useAuth()
 const config = useRuntimeConfig()
 const passwordConfig = config.public.passwordConfig
 
@@ -297,6 +304,7 @@ const passwordChecks = computed(() => {
 })
 
 const isFormValid = computed(() => {
+  // For sign up, need all validation to pass
   return form.email && 
          form.password && 
          Object.values(passwordChecks.value).every(check => check)
@@ -312,7 +320,6 @@ const updateEmail = (event: Event) => {
 
 const handleEmailBlur = () => {
   emailTouched.value = true
-  showExistingUserMessage.value = false
   
   // Always clear existing email errors first
   errors.value = errors.value.filter(error => error.field !== 'email')
@@ -328,54 +335,7 @@ const handleEmailBlur = () => {
   }
 }
 
-const checkExistingUser = (email: string): boolean => {
-  // Mock existing users database - in real app this would be an API call
-  const existingUsers = [
-    'john.doe@example.com',
-    'jane.smith@veterinary.com',
-    'test@demo.com',
-    'user@example.org'
-  ]
-  
-  // Also check localStorage for previously signed up users
-  if (process.client) {
-    try {
-      const storedUsers = localStorage.getItem('registeredUsers')
-      if (storedUsers) {
-        const userList = JSON.parse(storedUsers)
-        existingUsers.push(...userList)
-      }
-    } catch (error) {
-      console.warn('Could not load stored users')
-    }
-  }
-  
-  return existingUsers.includes(email.toLowerCase())
-}
 
-const handlePasswordReset = () => {
-  // Mock password reset functionality
-  if (process.client) {
-    alert(`Password reset email would be sent to: ${form.email}`)
-  }
-  
-  // Reset form to pristine state
-  showExistingUserMessage.value = false
-  form.email = ''
-  form.password = ''
-  form.receiveUpdates = false
-  
-  // Clear all errors and touched states
-  errors.value = []
-  emailTouched.value = false
-}
-
-const dismissExistingUserMessage = () => {
-  showExistingUserMessage.value = false
-  form.email = ''
-  errors.value = errors.value.filter(error => error.field !== 'email')
-  emailTouched.value = false
-}
 
 const updatePassword = (event: Event) => {
   const target = event.target as HTMLInputElement
@@ -401,60 +361,84 @@ const clearFieldErrors = (fieldName: string) => {
   errors.value = errors.value.filter(error => error.field !== fieldName)
 }
 
+const resetPassword = () => {
+  // Clear existing errors first
+  errors.value = errors.value.filter(error => error.field !== 'email')
+  
+  // Check if email field is empty
+  if (!form.email || !form.email.trim()) {
+    errors.value.push({ field: 'email', message: 'Please enter an email address to reset your password.' })
+    return
+  }
+  
+  // Validate email format
+  const emailErrors = validateEmail(form.email)
+  if (emailErrors.length > 0) {
+    emailErrors.forEach(message => {
+      errors.value.push({ field: 'email', message })
+    })
+    return
+  }
+  
+  // Email is valid, show the modal
+  showResetModal.value = true
+}
+
+const closeResetModal = () => {
+  showResetModal.value = false
+}
+
 const handleSubmit = async () => {
   isSubmitting.value = true
   errors.value = []
-  showExistingUserMessage.value = false
   
   try {
-    // Validate form
-    const validationErrors = validateForm(form)
-    
-    if (validationErrors.length > 0) {
-      errors.value = validationErrors
+    // Basic validation
+    if (!form.email || !form.password) {
+      errors.value = [{ field: 'general', message: 'Please fill in all required fields.' }]
       return
     }
     
-    // Check if user already exists
-    if (checkExistingUser(form.email)) {
-      showExistingUserMessage.value = true
-      return
-    }
+    // Check if user already exists with this email
+    const existingUser = findRegisteredUser(form.email)
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    // Store the new user in localStorage for future "existing user" checks
-    if (process.client) {
-      try {
-        const storedUsers = localStorage.getItem('registeredUsers')
-        const userList = storedUsers ? JSON.parse(storedUsers) : []
-        if (!userList.includes(form.email.toLowerCase())) {
-          userList.push(form.email.toLowerCase())
-          localStorage.setItem('registeredUsers', JSON.stringify(userList))
-        }
-      } catch (error) {
-        console.warn('Could not store user for future checks')
+    if (existingUser) {
+      // User exists - try to sign them in with provided password
+      const signInResult = await signIn(form.email, form.password)
+      
+      if (signInResult.success) {
+        // Correct password - sign them in and go to success page
+        await navigateTo('/success')
+        return
+      } else {
+        // Wrong password - show error
+        errors.value = [{ field: 'general', message: signInResult.error || 'Incorrect password for existing account.' }]
+        return
       }
-    }
-    
-    // Authenticate user with JWT
-    try {
-      await login({
+    } else {
+      // New user - validate form and register
+      const validationErrors = validateForm(form)
+      
+      if (validationErrors.length > 0) {
+        errors.value = validationErrors
+        return
+      }
+      
+      // Register new user
+      const result = await register({
         email: form.email,
         password: form.password,
         receiveUpdates: form.receiveUpdates
       })
-      console.log('Login successful, navigating to success page')
-    } catch (loginError) {
-      console.error('Login failed:', loginError)
-      errors.value = [{ field: 'general', message: 'Authentication failed. Please try again.' }]
-      return
+      
+      if (!result.success) {
+        errors.value = [{ field: 'general', message: result.error || 'Registration failed.' }]
+        return
+      }
+      
+      // Navigate to success page
+      await navigateTo('/success')
     }
-    
-    // Navigate to success page
-    await navigateTo('/success')
-    
   } catch (error) {
     errors.value = [{ field: 'general', message: 'An error occurred. Please try again.' }]
   } finally {
@@ -713,6 +697,83 @@ fieldset {
   margin: 0;
 }
 
+/* Reset password link */
+.reset-password-link {
+  color: var(--n-color-text-link);
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: var(--n-font-size-s);
+  transition: color 0.2s ease;
+}
+
+.reset-password-link:hover,
+.reset-password-link:focus {
+  color: var(--n-color-text-link-hover);
+  text-decoration: none;
+}
+
+.reset-password-link:focus-visible {
+  outline: 2px solid var(--n-color-border-focus);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Reset modal styles */
+.reset-modal-content {
+  padding: var(--n-space-m) 0;
+}
+
+.reset-success-banner {
+  background: var(--n-color-status-success-background);
+  border-color: var(--n-color-status-success);
+}
+
+.reset-success-content {
+  display: flex;
+  gap: var(--n-space-m);
+  align-items: flex-start;
+}
+
+.reset-success-text {
+  flex: 1;
+}
+
+.reset-success-title {
+  font-weight: var(--n-font-weight-active);
+  margin: 0 0 var(--n-space-s) 0;
+  color: var(--n-color-text);
+  font-size: var(--n-font-size-m);
+}
+
+.reset-success-description {
+  margin: 0 0 var(--n-space-s) 0;
+  color: var(--n-color-text);
+  line-height: 1.5;
+}
+
+.reset-success-description strong {
+  color: var(--n-color-text);
+  font-weight: var(--n-font-weight-active);
+  background: var(--n-color-surface-raised);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.95em;
+}
+
+.reset-success-note {
+  margin: 0;
+  color: var(--n-color-text-weak);
+  font-size: var(--n-font-size-s);
+  line-height: 1.4;
+}
+
+.reset-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--n-space-s);
+}
+
 @media (max-width: 768px) {
   .signup-container {
     padding: var(--n-space-s);
@@ -772,6 +833,17 @@ fieldset {
   .card-subtitle {
     font-size: var(--n-font-size-s);
   }
+  
+  .reset-success-content {
+    flex-direction: column;
+    gap: var(--n-space-s);
+    align-items: center;
+    text-align: center;
+  }
+  
+  .reset-modal-content {
+    padding: var(--n-space-s) 0;
+  }
 }
 
 /* Accessibility helpers */
@@ -824,4 +896,6 @@ fieldset {
   color: var(--n-color-text-weak);
   opacity: 0.5;
 }
+
+
 </style>

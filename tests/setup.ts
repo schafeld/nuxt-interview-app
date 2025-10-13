@@ -129,3 +129,29 @@ Object.defineProperty(globalThis, 'usePasswordValidation', {
   })),
   writable: true
 })
+
+// Mock useEncryption composable
+Object.defineProperty(globalThis, 'useEncryption', {
+  value: vi.fn(() => ({
+    encrypt: (text: string) => {
+      // Simple base64 encoding for testing
+      return btoa(text)
+    },
+    decrypt: (encryptedText: string) => {
+      try {
+        return atob(encryptedText)
+      } catch {
+        return ''
+      }
+    },
+    verifyPassword: (plainPassword: string, encryptedPassword: string) => {
+      try {
+        const decrypted = atob(encryptedPassword)
+        return decrypted === plainPassword
+      } catch {
+        return false
+      }
+    }
+  })),
+  writable: true
+})

@@ -147,7 +147,7 @@ definePageMeta({
 })
 
 // Composables
-const { user, isAuthenticated, initializeAuth, updatePreferences: updateUserPreferences, logout } = useAuth()
+const { user, isAuthenticated, initializeAuth, updatePreferences: updateUserPreferences, logout, clearAccountData } = useAuth()
 
 // State
 const isUpdating = ref(false)
@@ -210,9 +210,9 @@ const signOut = async () => {
 }
 
 const clearData = async () => {
-  if (confirm('Are you sure you want to clear all your account data? This action cannot be undone.')) {
+  if (confirm('Are you sure you want to clear all your account data? This action cannot be undone. You will be able to register again with the same email address.')) {
     try {
-      await logout()
+      await clearAccountData()
       navigateTo('/')
     } catch (error) {
       console.error('Clear data failed:', error)
