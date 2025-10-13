@@ -76,9 +76,14 @@
   }
   
   .detail-row {
-    flex-direction: column;
-    text-align: center;
-    gap: var(--n-space-xs);
+    align-items: flex-start !important;
+    text-align: left !important;
+    gap: var(--n-space-s) !important;
+    padding: var(--n-space-s) var(--n-space-m) !important;
+  }
+  
+  .detail-icon {
+    margin-top: 2px !important;
   }
   
   /* Footer adjustments */
@@ -204,6 +209,29 @@
   .requirements-list nord-icon {
     min-width: 16px;
     min-height: 16px;
+  }
+  
+  /* Profile page mobile improvements */
+  .profile-details .detail-row {
+    margin: 0 auto !important;
+    max-width: 100% !important;
+  }
+  
+  /* Success page mobile improvements */
+  .signup-details .detail-row {
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+  }
+  
+  .signup-details .detail-icon {
+    margin-top: 2px !important;
+    flex-shrink: 0 !important;
+  }
+  
+  .banner-content .detail-row p {
+    margin: 0 !important;
+    line-height: 1.4 !important;
   }
 }
 

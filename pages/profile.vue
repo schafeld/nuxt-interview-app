@@ -353,16 +353,17 @@ const goToSignup = () => {
 
 .detail-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--n-space-s);
-  padding: var(--n-space-s);
+  padding: var(--n-space-s) var(--n-space-m);
   background: var(--n-color-surface);
   border-radius: var(--n-border-radius);
   border: 1px solid var(--n-color-border);
-  text-align: center;
-  justify-content: center;
+  text-align: left;
+  justify-content: flex-start;
   max-width: 400px;
-  width: 100%;
+  width: 80%; 
+  margin: 0 auto;
 }
 
 .detail-icon {
@@ -461,7 +462,7 @@ const goToSignup = () => {
   max-width: 200px;
 }
 
-@media (max-width: 768px) {
+  @media (max-width: 768px) {
   .profile-container {
     padding: var(--n-space-m);
   }
@@ -482,9 +483,10 @@ const goToSignup = () => {
   
   .detail-row {
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
     justify-content: flex-start;
     text-align: left;
+    padding: var(--n-space-s) var(--n-space-m);
   }
   
   .detail-content {
@@ -507,9 +509,7 @@ const goToSignup = () => {
     right: auto;
     max-width: 100%;
   }
-}
-
-@media (max-width: 480px) {
+}@media (max-width: 480px) {
   .preferences-form,
   .account-actions {
     padding: var(--n-space-m);

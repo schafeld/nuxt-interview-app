@@ -219,7 +219,7 @@ const goToDashboard = () => {
 
 .detail-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--n-space-s);
   padding: var(--n-space-xs) 0;
 }
@@ -227,6 +227,7 @@ const goToDashboard = () => {
 .detail-icon {
   color: var(--n-color-status-success);
   flex-shrink: 0;
+  margin-top: 2px;
 }
 
 .next-steps {
@@ -302,9 +303,12 @@ const goToDashboard = () => {
   
   .detail-row,
   .step-item {
-    /* flex-direction: column; */
     align-items: flex-start;
-    gap: var(--n-space-xs);
+    gap: var(--n-space-s);
+  }
+  
+  .detail-row {
+    justify-content: flex-start;
   }
   
   .step-item {
@@ -325,8 +329,13 @@ const goToDashboard = () => {
   }
   
   .detail-row {
-    align-items: center;
-    /* text-align: center; */
+    align-items: flex-start;
+    text-align: left;
+    justify-content: flex-start;
+  }
+  
+  .detail-icon {
+    margin-top: 2px;
   }
 }
 </style>
