@@ -32,10 +32,6 @@
           >
             <nord-icon slot="start" name="interface-email" size="s" aria-hidden="true"></nord-icon>
           </nord-input>
-          <!-- This is redundant, error message appears in a slot in the nord-input
-          <div v-if="getFieldError('email')" id="email-error" class="error-message" role="alert">
-            {{ getFieldError('email') }}
-          </div> -->
         </div>
         
         <!-- Password Field -->
@@ -77,7 +73,6 @@
             <div id="password-requirements" class="requirements-content">
               <div class="requirements-title">
                 <h2 id="password-requirements-title">
-                  <nord-icon name="interface-security-shield-check" size="s" aria-hidden="true"></nord-icon>
                   Password Requirements:
                 </h2>
               </div>
