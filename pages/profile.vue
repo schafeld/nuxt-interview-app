@@ -22,7 +22,6 @@
             <div class="banner-content">
               <div class="section-title">
                 <h2>
-                  <nord-icon name="interface-security-shield-check" size="s"></nord-icon>
                   Account Information
                 </h2>
               </div>
@@ -119,7 +118,6 @@
       <div v-else class="no-data">
         <nord-banner variant="warning" class="warning-banner">
           <div class="banner-content">
-            <nord-icon name="interface-alert-triangle" size="m" class="warning-icon"></nord-icon>
             <div class="warning-text">
               <h2>No Profile Data Found</h2>
               <p>
