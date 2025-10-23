@@ -86,13 +86,23 @@ onMounted(async () => {
   }
 })
 
-// Watch for route changes to refresh token if needed
+// Watch for route changes to refresh auth state and token if needed
 watch(() => useRoute().path, async () => {
-  if (process.client && isAuthenticated.value) {
-    const { refreshTokenIfNeeded } = useAuth()
-    await refreshTokenIfNeeded()
+  if (process.client) {
+    // Always refresh auth state on route change to ensure nav menu updates
+    await initializeAuth()
+    
+    if (isAuthenticated.value) {
+      const { refreshTokenIfNeeded } = useAuth()
+      await refreshTokenIfNeeded()
+    }
   }
 })
+
+// Watch for authentication state changes to ensure reactivity
+watch(isAuthenticated, (newValue) => {
+  // Auth state changed, navigation will automatically update
+}, { immediate: true })
 
 const navigateToProfile = () => {
   navigateTo('/profile')
@@ -115,6 +125,7 @@ const signOut = async () => {
   try {
     setGlobalLoading(true, 'Signing out...')
     await logout()
+    // Use await to ensure navigation completes before loading finishes
     await navigateTo('/')
   } catch (error) {
     console.error('Sign out failed:', error)

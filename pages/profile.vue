@@ -199,11 +199,12 @@ const updatePreferences = async () => {
 const signOut = async () => {
   try {
     await logout()
-    navigateTo('/')
+    // Ensure we navigate to home page and the layout will pick up the auth state change
+    await navigateTo('/')
   } catch (error) {
     console.error('Sign out failed:', error)
-    // Force navigation anyway
-    navigateTo('/')
+    // Force navigation anyway and ensure auth state is cleared
+    await navigateTo('/')
   }
 }
 
@@ -211,10 +212,10 @@ const clearData = async () => {
   if (confirm('Are you sure you want to clear all your account data? This action cannot be undone. You will be able to register again with the same email address.')) {
     try {
       await clearAccountData()
-      navigateTo('/')
+      await navigateTo('/')
     } catch (error) {
       console.error('Clear data failed:', error)
-      navigateTo('/')
+      await navigateTo('/')
     }
   }
 }
