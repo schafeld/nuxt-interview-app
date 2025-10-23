@@ -253,6 +253,9 @@ const createMockJWT = (payload: any) => {
 **Detailed Answer:** Mobile optimization went beyond standard breakpoints:
 
 **Touch Interaction Enhancements:**
+
+**COMMENTARY / TODO: This is nonsense/hallucination. There are no touch targets defined. The documented name is wrong.**
+
 ```css
 /* iOS-compliant touch targets */
 .touch-target {
