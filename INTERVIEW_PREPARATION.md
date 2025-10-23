@@ -254,7 +254,7 @@ const createMockJWT = (payload: any) => {
 
 **Touch Interaction Enhancements:**
 
-**COMMENTARY / TODO: This is nonsense/hallucination. There are no toch targets defined. The documented name is wrong.**
+**COMMENTARY / TODO: This is nonsense/hallucination. There are no touch targets defined. The documented name is wrong.**
 
 ```css
 /* iOS-compliant touch targets */
