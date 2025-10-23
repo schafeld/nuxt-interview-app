@@ -20,7 +20,7 @@
   
   /* Better button spacing */
   .form-actions {
-    gap: var(--n-space-m) !important;
+    gap: var(--n-space-m);
     flex-direction: column;
   }
   
@@ -49,7 +49,7 @@
   .card-header,
   .profile-content,
   .success-content {
-    padding: var(--n-space-l) !important;
+    padding: var(--n-space-l);
   }
 }
 
@@ -59,14 +59,14 @@
   .card-header,
   .profile-content,
   .success-content {
-    padding: var(--n-space-m) !important;
+    padding: var(--n-space-m);
   }
   
   /* Smaller font sizes for headers on very small screens */
   .card-title h1,
   .profile-title,
   .success-title {
-    font-size: var(--n-font-size-l) !important;
+    font-size: var(--n-font-size-l);
   }
   
   /* Stack profile details vertically */
@@ -76,14 +76,14 @@
   }
   
   .detail-row {
-    align-items: flex-start !important;
-    text-align: left !important;
-    gap: var(--n-space-s) !important;
-    padding: var(--n-space-s) var(--n-space-m) !important;
+    align-items: flex-start;
+    text-align: left;
+    gap: var(--n-space-s);
+    padding: var(--n-space-s) var(--n-space-m);
   }
   
   .detail-icon {
-    margin-top: 2px !important;
+    margin-top: 2px;
   }
   
   /* Footer adjustments */
@@ -112,7 +112,7 @@
   
   /* More compact card headers */
   .card-header {
-    padding: var(--n-space-m) var(--n-space-l) var(--n-space-s) var(--n-space-l) !important;
+    padding: var(--n-space-m) var(--n-space-l) var(--n-space-s) var(--n-space-l);
   }
   
   /* Reduce password requirements spacing */
@@ -121,7 +121,7 @@
   }
   
   .requirements-banner {
-    padding: var(--n-space-s) !important;
+    padding: var(--n-space-s);
   }
 }
 
@@ -138,10 +138,12 @@
 
 /* Accessibility: Respect user's motion preferences */
 @media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
   }
 }
 
@@ -213,25 +215,25 @@
   
   /* Profile page mobile improvements */
   .profile-details .detail-row {
-    margin: 0 auto !important;
-    max-width: 100% !important;
+    margin: 0 auto;
+    max-width: 100%;
   }
   
   /* Success page mobile improvements */
   .signup-details .detail-row {
-    align-items: flex-start !important;
-    justify-content: flex-start !important;
-    text-align: left !important;
+    align-items: flex-start;
+    justify-content: flex-start;
+    text-align: left;
   }
   
   .signup-details .detail-icon {
-    margin-top: 2px !important;
-    flex-shrink: 0 !important;
+    margin-top: 2px;
+    flex-shrink: 0;
   }
   
   .banner-content .detail-row p {
-    margin: 0 !important;
-    line-height: 1.4 !important;
+    margin: 0;
+    line-height: 1.4;
   }
 }
 
