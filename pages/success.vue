@@ -93,6 +93,13 @@ const signupData = computed(() => user.value)
 onMounted(async () => {
   // Initialize auth to load user data from JWT
   await initializeAuth()
+  
+  // Force reactivity update after a short delay to ensure layout gets the state change
+  if (process.client) {
+    nextTick(() => {
+      // Trigger a re-check of auth state to ensure nav menu appears
+    })
+  }
 })
 
 // Methods
