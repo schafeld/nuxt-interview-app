@@ -24,8 +24,8 @@ Object.defineProperty(globalThis, 'ref', {
 })
 
 Object.defineProperty(globalThis, 'computed', {
-  value: vi.fn((fn) => ({ 
-    value: typeof fn === 'function' ? fn() : fn 
+  value: vi.fn((fn) => ({
+    value: typeof fn === 'function' ? fn() : fn
   })),
   writable: true
 })
@@ -46,6 +46,11 @@ Object.defineProperty(globalThis, 'onMounted', {
 })
 
 Object.defineProperty(globalThis, 'onBeforeUnmount', {
+  value: vi.fn(),
+  writable: true
+})
+
+Object.defineProperty(globalThis, 'onUnmounted', {
   value: vi.fn(),
   writable: true
 })
@@ -97,9 +102,14 @@ Object.defineProperty(globalThis, 'useRuntimeConfig', {
   writable: true
 })
 
-// Mock process.client
+// Mock process.client and process.env
 Object.defineProperty(globalThis, 'process', {
-  value: { client: true },
+  value: {
+    client: true,
+    env: {
+      NODE_ENV: 'test'
+    }
+  },
   writable: true
 })
 
@@ -151,6 +161,38 @@ Object.defineProperty(globalThis, 'useEncryption', {
       } catch {
         return false
       }
+    }
+  })),
+  writable: true
+})
+
+// Mock useSecureEncryption composable
+Object.defineProperty(globalThis, 'useSecureEncryption', {
+  value: vi.fn(() => ({
+    hashPassword: async (password: string, salt?: string) => {
+      // Mock PBKDF2 hash format for testing
+      const mockSalt = salt || 'mocksalt123456789'
+      return `pbkdf2$${mockSalt}$mockhash123456789`
+    },
+    verifyPassword: async (password: string, hash: string) => {
+      // Mock verification - always return true for 'correct' password
+      return password === 'correct'
+    },
+    isSecureHash: (hash: string) => {
+      return hash.startsWith('pbkdf2$')
+    },
+    migrateOldPassword: async (plainPassword: string, legacyHash: string) => {
+      // Mock migration
+      if (plainPassword === 'correct') {
+        return `pbkdf2$mocksalt$mockhash123456789`
+      }
+      throw new Error('Password verification failed during migration')
+    },
+    generateSecureToken: () => {
+      return 'mock-secure-token-123456789'
+    },
+    generateSessionId: () => {
+      return 'mock-session-id-123456789'
     }
   })),
   writable: true

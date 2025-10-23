@@ -133,9 +133,40 @@ export const useAuth = () => {
         return { success: false, error: 'No account found with this email address.' }
       }
       
-      // Verify password using encryption utility
-      const { verifyPassword } = useEncryption()
-      if (!verifyPassword(password, registeredUser.encryptedPassword)) {
+      // Verify password using secure encryption (with fallback to old method)
+      const { verifyPassword: verifySecurePassword, isSecureHash, migrateOldPassword } = useSecureEncryption()
+      const { verifyPassword: verifyOldPassword } = useEncryption()
+      
+      let passwordValid = false
+      
+      if (isSecureHash(registeredUser.encryptedPassword)) {
+        // Use new secure verification
+        passwordValid = await verifySecurePassword(password, registeredUser.encryptedPassword)
+      } else {
+        // Use old verification and migrate
+        passwordValid = verifyOldPassword(password, registeredUser.encryptedPassword)
+        
+        if (passwordValid) {
+          // Migrate password to secure format
+          try {
+            const newHash = await migrateOldPassword(password, registeredUser.encryptedPassword)
+            registeredUser.encryptedPassword = newHash
+            
+            // Update stored users with new hash
+            const users = getRegisteredUsers()
+            const userIndex = users.findIndex(u => u.email.toLowerCase() === email.toLowerCase())
+            if (userIndex !== -1) {
+              users[userIndex] = registeredUser
+              saveRegisteredUsers(users)
+            }
+          } catch (error) {
+            console.warn('Password migration failed:', error)
+            // Continue with login even if migration fails
+          }
+        }
+      }
+      
+      if (!passwordValid) {
         return { success: false, error: 'Incorrect password. Please try again or request a password reset.' }
       }
       
@@ -180,11 +211,11 @@ export const useAuth = () => {
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1000))
       
-      // Encrypt password and store user
-      const { encrypt } = useEncryption()
+      // Encrypt password and store user using secure encryption
+      const { hashPassword } = useSecureEncryption()
       const newUser: StoredUser = {
         email: formData.email.toLowerCase(),
-        encryptedPassword: encrypt(formData.password),
+        encryptedPassword: await hashPassword(formData.password),
         receiveUpdates: formData.receiveUpdates,
         timestamp: new Date().toISOString()
       }
