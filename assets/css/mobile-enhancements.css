@@ -1,6 +1,8 @@
 /* assets/css/mobile-enhancements.css */
 
 /* Touch-friendly button and input sizing */
+
+/* COMMENTARY / TODO: This is nonsense/hallucination. Remove or actiually use this class. */
 .mobile-touch-target {
   min-height: 44px; /* iOS recommended touch target size */
   min-width: 44px;
