@@ -18,6 +18,7 @@
         <!-- Email Field -->
         <div class="form-field">
           <nord-input
+            inputId="email-input"
             type="email"
             :value="form.email"
             @input="updateEmail"
@@ -37,6 +38,7 @@
         <!-- Password Field -->
         <div class="form-field">
           <nord-input
+            inputId="password-input"
             :type="showPassword ? 'text' : 'password'"
             :value="form.password"
             @input="updatePassword"
@@ -145,6 +147,7 @@
         <!-- Updates Checkbox -->
         <fieldset class="form-field">
           <nord-checkbox
+            inputId="updates-checkbox"
             :checked="form.receiveUpdates"
             @change="updateReceiveUpdates"
             label="I would like to receive occasional product updates and announcements about new features."
