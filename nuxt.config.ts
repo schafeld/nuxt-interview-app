@@ -3,7 +3,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   ssr: false,
   compatibilityDate: '2025-09-08',
-  
+
   // SEO and accessibility configuration
   app: {
     head: {
@@ -29,13 +29,13 @@ export default defineNuxtConfig({
       ]
     }
   },
-  
+
   typescript: {
     strict: true,
     typeCheck: false
   },
   css: [
-    '@nordhealth/css', 
+    '@nordhealth/css',
     '@nordhealth/themes/lib/vet.css',
     '@nordhealth/icons',
     '~/assets/css/mobile-enhancements.css'
@@ -70,15 +70,15 @@ export default defineNuxtConfig({
             "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // Note: 'unsafe-eval' needed for Nuxt dev mode
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
             "font-src 'self' https://fonts.gstatic.com data:",
-            "img-src 'self' data: https: blob:",
-            "connect-src 'self' ws: wss:",
+            "img-src 'self' data: https: blob: https://nordcdn.net",
+            "connect-src 'self' ws: wss: https://nordcdn.net",
             "media-src 'self'",
             "object-src 'none'",
             "base-uri 'self'",
             "form-action 'self'",
             "frame-ancestors 'none'"
           ].join('; '),
-          
+
           // Security headers
           'X-Content-Type-Options': 'nosniff',
           'X-Frame-Options': 'DENY',
@@ -94,15 +94,15 @@ export default defineNuxtConfig({
             'gyroscope=()',
             'accelerometer=()'
           ].join(', '),
-          
+
           // Cache control for static assets
           'Cache-Control': 'public, max-age=3600',
-          
+
           // HTTPS enforcement (production only)
           'Strict-Transport-Security': 'max-age=31536000; includeSubDomains'
         }
       },
-      
+
       // Service worker specific headers
       '/sw.js': {
         headers: {
@@ -110,7 +110,7 @@ export default defineNuxtConfig({
           'Service-Worker-Allowed': '/'
         }
       },
-      
+
       // Manifest specific headers
       '/manifest.json': {
         headers: {
