@@ -55,7 +55,7 @@
     <GlobalLoading />
     
     <!-- Nord Footer -->
-    <nord-footer class="app-footer" role="contentinfo" aria-label="Footer" variant="plain">
+    <nord-footer class="app-footer" variant="plain">
       <div class="footer-info">
           &copy; 2025 VetSignup - Veterinary Product Registration &nbsp;|&nbsp;
           Built with <nord-icon name="interface-favorite" size="xs" aria-hidden="true"></nord-icon> &amp; NordHealth Design System by <a href="https://github.com/schafeld/nuxt-interview-app" title="Github repository" target="_blank" class="author-link">Oliver Schafeld <nord-icon name="generic-github" size="s" class="github-icon" aria-hidden="true"></nord-icon></a>
@@ -250,9 +250,17 @@ const signOut = async () => {
   margin-top: auto;
   border-top: 1px solid var(--n-color-border);
   background: var(--n-color-surface-raised);
-  color: var(--n-color-text-weakest);
+  color: var(--n-color-text-weak);
   font-family: Arial, Helvetica, sans-serif;
   visibility: visible;
+}
+
+.footer-info {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--n-space-m);
+  text-align: center;
+  color: var(--n-color-text-weak);
 }
 
 .footer-content {
@@ -267,7 +275,7 @@ const signOut = async () => {
 }
 
 .author-link {
-  color: var(--n-color-text-weakest);
+  color: var(--n-color-text-weak);
   text-decoration: none;
   transition: text-decoration 0.2s ease;
 }
