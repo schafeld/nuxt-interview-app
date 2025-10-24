@@ -266,10 +266,6 @@ const signOut = async () => {
   gap: var(--n-space-xs);
 }
 
-:host([error]) .n-input-container ::slotted(:is(nord-button:not(:focus),nord-dropdown:not(:focus-within),nord-dropdown[open])) {
-    --n-button-border-color: transparent!important;
-}
-
 .author-link {
   color: var(--n-color-text-weakest);
   text-decoration: none;
