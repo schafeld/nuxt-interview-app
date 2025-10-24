@@ -133,15 +133,15 @@ runtimeConfig: {
 ├── assets/css/          # Additional stylesheets
 │   └── mobile-enhancements.css
 ├── components/          # Reusable Vue components
-│   ├── ErrorBoundary.vue    # Error boundary wrapper
 │   └── GlobalLoading.vue    # Global loading overlay
+├── error.vue            # Global error page (Vue 3+ convention)
 ├── composables/         # Vue composables
-│   ├── useAccessibility.ts  # Accessibility utilities
+│   ├── useAccessibility.ts  # Accessibility utilities (VueUse powered)
 │   ├── useAuth.ts          # JWT authentication system
 │   ├── useSecureEncryption.ts # PBKDF2 cryptography
 │   ├── usePerformanceMonitoring.ts # Web Vitals tracking
 │   ├── useFormValidation.ts # Form validation logic
-│   ├── useLoading.ts       # Loading state management
+│   ├── useLoading.ts       # Loading state management (VueUse powered)
 │   ├── usePasswordValidation.ts # Password validation
 │   └── useValidation.ts    # Zod schema validation
 ├── layouts/             # Nuxt layouts

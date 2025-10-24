@@ -48,9 +48,7 @@
     
     <!-- Main Content -->
     <main id="main-content" class="app-main" role="main" tabindex="-1">
-      <ErrorBoundary>
-        <slot />
-      </ErrorBoundary>
+            <NuxtPage />
     </main>
     
     <!-- Global Loading Overlay -->
@@ -72,7 +70,7 @@
 
 <script setup lang="ts">
 // Auth state using new auth composable
-const { isAuthenticated, user, initializeAuth, logout } = useAuth()
+const { isAuthenticated, user, initializeAuth, logout } = useAuth() // todo: refactor? use in middleware
 const { setGlobalLoading } = useGlobalLoading()
 
 // Computed values
@@ -81,21 +79,18 @@ const userEmail = computed(() => user.value?.email || '')
 
 // Lifecycle
 onMounted(async () => {
-  if (process.client) {
-    await initializeAuth()
-  }
+  // initializeAuth already includes process.client check internally
+  await initializeAuth()
 })
 
 // Watch for route changes to refresh auth state and token if needed
 watch(() => useRoute().path, async () => {
-  if (process.client) {
-    // Always refresh auth state on route change to ensure nav menu updates
-    await initializeAuth()
-    
-    if (isAuthenticated.value) {
-      const { refreshTokenIfNeeded } = useAuth()
-      await refreshTokenIfNeeded()
-    }
+  // Always refresh auth state on route change to ensure nav menu updates
+  await initializeAuth()
+  
+  if (isAuthenticated.value) {
+    const { refreshTokenIfNeeded } = useAuth()
+    await refreshTokenIfNeeded()
   }
 })
 
@@ -112,11 +107,9 @@ const handleSkipLink = (event: Event) => {
   // Let the default behavior happen (scroll to target)
   // But also ensure focus moves to the main content for screen readers
   nextTick(() => {
-    if (process.client) {
-      const mainContent = document.getElementById('main-content')
-      if (mainContent) {
-        mainContent.focus()
-      }
+    const mainContent = document.getElementById('main-content')
+    if (mainContent) {
+      mainContent.focus()
     }
   })
 }

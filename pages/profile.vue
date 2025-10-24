@@ -136,6 +136,7 @@
 </template>
 
 <script setup lang="ts">
+import { useTimeoutFn } from '@vueuse/core'
 import type { SignupForm } from '~/types'
 
 // Meta and middleware
@@ -185,10 +186,10 @@ const updatePreferences = async () => {
     
     updateMessage.value = 'Preferences updated successfully!'
     
-    // Clear message after 3 seconds
-    setTimeout(() => {
+    // Clear message after 3 seconds using VueUse
+    useTimeoutFn(() => {
       updateMessage.value = ''
-    }, 3000)
+    }, 3000).start()
   } catch (error) {
     updateMessage.value = 'Error updating preferences. Please try again.'
   } finally {

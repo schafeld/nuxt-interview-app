@@ -95,11 +95,9 @@ onMounted(async () => {
   await initializeAuth()
   
   // Force reactivity update after a short delay to ensure layout gets the state change
-  if (process.client) {
-    nextTick(() => {
-      // Trigger a re-check of auth state to ensure nav menu appears
-    })
-  }
+  nextTick(() => {
+    // Trigger a re-check of auth state to ensure nav menu appears
+  })
 })
 
 // Methods

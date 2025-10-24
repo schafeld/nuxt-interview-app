@@ -1,6 +1,8 @@
 // plugins/serviceWorker.client.ts
+import { useTimeoutFn } from '@vueuse/core'
+
 export default defineNuxtPlugin(() => {
-  if (process.client && 'serviceWorker' in navigator) {
+  if ('serviceWorker' in navigator) {
     // Register service worker asynchronously
     navigator.serviceWorker.register('/sw.js', {
       scope: '/'
@@ -10,7 +12,7 @@ export default defineNuxtPlugin(() => {
       // Handle service worker updates
       registration.addEventListener('updatefound', () => {
         const newWorker = registration.installing
-        
+
         if (newWorker) {
           newWorker.addEventListener('statechange', () => {
             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
@@ -24,7 +26,7 @@ export default defineNuxtPlugin(() => {
       // Handle service worker messages
       navigator.serviceWorker.addEventListener('message', (event) => {
         console.log('Service Worker message:', event.data)
-        
+
         if (event.data.type === 'CACHE_UPDATED') {
           // Handle cache updates
           console.log('Cache updated for:', event.data.url)
@@ -87,13 +89,13 @@ function showUpdateNotification() {
       </button>
     </div>
   `
-  
+
   document.body.appendChild(banner)
-  
-  // Auto-remove after 10 seconds
-  setTimeout(() => {
+
+  // Auto-remove after 10 seconds using VueUse
+  useTimeoutFn(() => {
     if (banner.parentElement) {
       banner.remove()
     }
-  }, 10000)
+  }, 10000).start()
 }

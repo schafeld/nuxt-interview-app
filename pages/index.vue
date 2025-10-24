@@ -62,6 +62,7 @@
               :title="showPassword ? 'Hide password' : 'Show password'"
               class="password-toggle"
               ref="passwordToggleButton"
+              square
             >
               <nord-icon :name="showPassword ? 'interface-edit-on' : 'interface-edit-off'" size="s"></nord-icon>
               <span class="visually-hidden">{{ showPassword ? 'Hide password' : 'Show password' }}</span>
@@ -180,7 +181,7 @@
 
         
         <!-- Error Messages -->
-        <div v-if="errors.length > 0" class="error-messages">
+        <div v-if="errors.length > 0" class="error-messages" role="alert" aria-live="assertive">
           <nord-banner variant="danger" class="error-banner">
             <div class="error-content">
               <div class="error-title">
@@ -892,6 +893,4 @@ fieldset {
   color: var(--n-color-text-weak);
   opacity: 0.5;
 }
-
-
 </style>

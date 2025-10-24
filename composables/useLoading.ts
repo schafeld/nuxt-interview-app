@@ -1,4 +1,6 @@
 // composables/useLoading.ts
+import { useTimeoutFn } from '@vueuse/core'
+
 interface LoadingState {
   [key: string]: boolean
 }
@@ -10,26 +12,26 @@ interface LoadingOptions {
 
 export const useLoading = () => {
   const loadingStates = reactive<LoadingState>({})
-  const loadingTimers = new Map<string, { showTimer?: NodeJS.Timeout; minTimer?: NodeJS.Timeout }>()
+  const loadingTimers = new Map<string, { showTimer?: ReturnType<typeof useTimeoutFn>; minTimer?: ReturnType<typeof useTimeoutFn> }>()
 
   // Set loading state for a specific key
   const setLoading = (key: string, loading: boolean, options: LoadingOptions = {}) => {
     const { minDuration = 0, showDelay = 0 } = options
-    
+
     // Clear any existing timers for this key
     const timers = loadingTimers.get(key)
     if (timers) {
-      if (timers.showTimer) clearTimeout(timers.showTimer)
-      if (timers.minTimer) clearTimeout(timers.minTimer)
+      if (timers.showTimer) timers.showTimer.stop()
+      if (timers.minTimer) timers.minTimer.stop()
     }
 
     if (loading) {
       // If there's a show delay, wait before setting loading to true
       if (showDelay > 0) {
-        const showTimer = setTimeout(() => {
+        const showTimer = useTimeoutFn(() => {
           loadingStates[key] = true
         }, showDelay)
-        
+
         loadingTimers.set(key, { showTimer })
       } else {
         loadingStates[key] = true
@@ -37,11 +39,11 @@ export const useLoading = () => {
     } else {
       // If there's a minimum duration and we're currently loading
       if (minDuration > 0 && loadingStates[key]) {
-        const minTimer = setTimeout(() => {
+        const minTimer = useTimeoutFn(() => {
           loadingStates[key] = false
           loadingTimers.delete(key)
         }, minDuration)
-        
+
         loadingTimers.set(key, { ...loadingTimers.get(key), minTimer })
       } else {
         loadingStates[key] = false
@@ -67,7 +69,7 @@ export const useLoading = () => {
     options: LoadingOptions = {}
   ): Promise<T> => {
     setLoading(key, true, options)
-    
+
     try {
       const result = await asyncFn()
       return result
@@ -80,10 +82,10 @@ export const useLoading = () => {
   const clearAll = () => {
     // Clear all timers
     loadingTimers.forEach(({ showTimer, minTimer }) => {
-      if (showTimer) clearTimeout(showTimer)
-      if (minTimer) clearTimeout(minTimer)
+      if (showTimer) showTimer.stop()
+      if (minTimer) minTimer.stop()
     })
-    
+
     loadingTimers.clear()
     Object.keys(loadingStates).forEach(key => {
       loadingStates[key] = false
@@ -93,9 +95,9 @@ export const useLoading = () => {
   // Create a loading state manager for a specific context
   const createLoadingManager = (prefix = '') => {
     const getKey = (key: string) => prefix ? `${prefix}.${key}` : key
-    
+
     return {
-      setLoading: (key: string, loading: boolean, options?: LoadingOptions) => 
+      setLoading: (key: string, loading: boolean, options?: LoadingOptions) =>
         setLoading(getKey(key), loading, options),
       isLoading: (key: string) => isLoading(getKey(key)),
       withLoading: <T>(key: string, asyncFn: () => Promise<T>, options?: LoadingOptions) =>
@@ -133,7 +135,7 @@ export const useLoading = () => {
 export const useGlobalLoading = () => {
   const globalLoading = useState<boolean>('global.loading', () => false)
   const loadingMessage = useState<string>('global.loading.message', () => '')
-  
+
   const setGlobalLoading = (loading: boolean, message = '') => {
     globalLoading.value = loading
     loadingMessage.value = message
@@ -144,7 +146,7 @@ export const useGlobalLoading = () => {
     message = 'Loading...'
   ): Promise<T> => {
     setGlobalLoading(true, message)
-    
+
     try {
       const result = await asyncFn()
       return result
