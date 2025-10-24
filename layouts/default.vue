@@ -55,14 +55,10 @@
     <GlobalLoading />
     
     <!-- Nord Footer -->
-    <nord-footer class="app-footer" role="contentinfo">
-      <div class="footer-content">
-        <p class="footer-text">
-          &copy; 2025 VetSignup - Veterinary Product Registration
-        </p>
-        <p class="footer-note">
+    <nord-footer class="app-footer" role="contentinfo" aria-label="Footer" variant="plain">
+      <div class="footer-info">
+          &copy; 2025 VetSignup - Veterinary Product Registration &nbsp;|&nbsp;
           Built with <nord-icon name="interface-favorite" size="xs" aria-hidden="true"></nord-icon> &amp; NordHealth Design System by <a href="https://github.com/schafeld/nuxt-interview-app" title="Github repository" target="_blank" class="author-link">Oliver Schafeld <nord-icon name="generic-github" size="s" class="github-icon" aria-hidden="true"></nord-icon></a>
-        </p>
       </div>
     </nord-footer>
   </div>
@@ -194,6 +190,7 @@ const signOut = async () => {
   margin: 0;
   font-size: var(--n-font-size-s);
   color: var(--n-color-text-weaker);
+  text-align: center;
 }
 
 .footer-note {
@@ -204,6 +201,7 @@ const signOut = async () => {
   margin: 0;
   font-size: var(--n-font-size-xs);
   color: var(--n-color-text-weaker);
+  text-align: center;
 }
 
 .header-right {
@@ -258,6 +256,7 @@ const signOut = async () => {
 }
 
 .footer-content {
+  color: red;
   max-width: 1200px;
   margin: 0 auto;
   padding: var(--n-space-m);
@@ -267,8 +266,12 @@ const signOut = async () => {
   gap: var(--n-space-xs);
 }
 
+:host([error]) .n-input-container ::slotted(:is(nord-button:not(:focus),nord-dropdown:not(:focus-within),nord-dropdown[open])) {
+    --n-button-border-color: transparent!important;
+}
+
 .author-link {
-  color: var(--n-color-text-weaker);
+  color: var(--n-color-text-weakest);
   text-decoration: none;
   transition: text-decoration 0.2s ease;
 }

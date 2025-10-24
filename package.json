@@ -26,7 +26,7 @@
     "vue-tsc": "^3.0.6"
   },
   "dependencies": {
-    "@nordhealth/components": "^2.0.0",
+    "@nordhealth/components": "^4.8.1",
     "@nordhealth/css": "^4.1.0",
     "@nordhealth/icons": "^3.11.0",
     "@nordhealth/themes": "^9.0.0",

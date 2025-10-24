@@ -95,7 +95,6 @@ export default defineNuxtPlugin(async () => {
     )
 
     console.log(`NordHealth plugin ready: ${definedComponents.length}/${componentTags.length} components registered`)
-
   } catch (error) {
     console.error('Failed to load NordHealth components:', error)
   }
