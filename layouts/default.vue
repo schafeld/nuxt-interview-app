@@ -48,23 +48,17 @@
     
     <!-- Main Content -->
     <main id="main-content" class="app-main" role="main" tabindex="-1">
-      <ErrorBoundary>
-        <slot />
-      </ErrorBoundary>
+            <NuxtPage />
     </main>
     
     <!-- Global Loading Overlay -->
     <GlobalLoading />
     
     <!-- Nord Footer -->
-    <nord-footer class="app-footer" role="contentinfo">
-      <div class="footer-content">
-        <p class="footer-text">
-          &copy; 2025 VetSignup - Veterinary Product Registration
-        </p>
-        <p class="footer-note">
+    <nord-footer class="app-footer" role="contentinfo" aria-label="Footer" variant="plain">
+      <div class="footer-info">
+          &copy; 2025 VetSignup - Veterinary Product Registration &nbsp;|&nbsp;
           Built with <nord-icon name="interface-favorite" size="xs" aria-hidden="true"></nord-icon> &amp; NordHealth Design System by <a href="https://github.com/schafeld/nuxt-interview-app" title="Github repository" target="_blank" class="author-link">Oliver Schafeld <nord-icon name="generic-github" size="s" class="github-icon" aria-hidden="true"></nord-icon></a>
-        </p>
       </div>
     </nord-footer>
   </div>
@@ -72,7 +66,7 @@
 
 <script setup lang="ts">
 // Auth state using new auth composable
-const { isAuthenticated, user, initializeAuth, logout } = useAuth()
+const { isAuthenticated, user, initializeAuth, logout } = useAuth() // todo: refactor? use in middleware
 const { setGlobalLoading } = useGlobalLoading()
 
 // Computed values
@@ -81,21 +75,18 @@ const userEmail = computed(() => user.value?.email || '')
 
 // Lifecycle
 onMounted(async () => {
-  if (process.client) {
-    await initializeAuth()
-  }
+  // initializeAuth already includes process.client check internally
+  await initializeAuth()
 })
 
 // Watch for route changes to refresh auth state and token if needed
 watch(() => useRoute().path, async () => {
-  if (process.client) {
-    // Always refresh auth state on route change to ensure nav menu updates
-    await initializeAuth()
-    
-    if (isAuthenticated.value) {
-      const { refreshTokenIfNeeded } = useAuth()
-      await refreshTokenIfNeeded()
-    }
+  // Always refresh auth state on route change to ensure nav menu updates
+  await initializeAuth()
+  
+  if (isAuthenticated.value) {
+    const { refreshTokenIfNeeded } = useAuth()
+    await refreshTokenIfNeeded()
   }
 })
 
@@ -112,11 +103,9 @@ const handleSkipLink = (event: Event) => {
   // Let the default behavior happen (scroll to target)
   // But also ensure focus moves to the main content for screen readers
   nextTick(() => {
-    if (process.client) {
-      const mainContent = document.getElementById('main-content')
-      if (mainContent) {
-        mainContent.focus()
-      }
+    const mainContent = document.getElementById('main-content')
+    if (mainContent) {
+      mainContent.focus()
     }
   })
 }
@@ -201,6 +190,7 @@ const signOut = async () => {
   margin: 0;
   font-size: var(--n-font-size-s);
   color: var(--n-color-text-weaker);
+  text-align: center;
 }
 
 .footer-note {
@@ -211,6 +201,7 @@ const signOut = async () => {
   margin: 0;
   font-size: var(--n-font-size-xs);
   color: var(--n-color-text-weaker);
+  text-align: center;
 }
 
 .header-right {
@@ -265,6 +256,7 @@ const signOut = async () => {
 }
 
 .footer-content {
+  color: red;
   max-width: 1200px;
   margin: 0 auto;
   padding: var(--n-space-m);
@@ -275,7 +267,7 @@ const signOut = async () => {
 }
 
 .author-link {
-  color: var(--n-color-text-weaker);
+  color: var(--n-color-text-weakest);
   text-decoration: none;
   transition: text-decoration 0.2s ease;
 }

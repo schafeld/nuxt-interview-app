@@ -1,37 +1,37 @@
-<!-- components/ErrorBoundary.vue -->
+<!-- error.vue - Global error page following Nuxt 3 conventions -->
 <template>
-  <div v-if="hasError" class="error-boundary">
+  <div class="error-page">
     <nord-card class="error-card" padding="l">
       <div class="error-content">
         <div class="error-header">
           <nord-icon name="interface-warning" size="l" class="error-icon" aria-hidden="true"></nord-icon>
-          <h2 class="error-title">Something went wrong</h2>
+          <h1 class="error-title">{{ errorTitle }}</h1>
         </div>
         
         <div class="error-body">
           <p class="error-message">{{ errorMessage }}</p>
           
-          <div v-if="showDetails && errorDetails" class="error-details">
+          <div v-if="showDetails && error.stack" class="error-details">
             <details>
               <summary>Technical Details</summary>
-              <pre class="error-stack">{{ errorDetails }}</pre>
+              <pre class="error-stack">{{ error.stack }}</pre>
             </details>
           </div>
         </div>
         
         <div class="error-actions">
-          <nord-button @click="retry" class="retry-button">
+          <nord-button @click="handleError" class="retry-button">
             <nord-icon name="interface-reload" size="s" slot="start"></nord-icon>
-            Try Again
+            {{ error.statusCode === 404 ? 'Go Home' : 'Try Again' }}
           </nord-button>
           
           <nord-button @click="goHome" variant="plain">
             <nord-icon name="interface-home" size="s" slot="start"></nord-icon>
-            Go Home
+            Home
           </nord-button>
           
           <nord-button 
-            v-if="!showDetails" 
+            v-if="!showDetails && error.stack" 
             @click="toggleDetails" 
             variant="plain" 
             size="s"
@@ -42,120 +42,116 @@
       </div>
     </nord-card>
   </div>
-  
-  <slot v-else></slot>
 </template>
 
 <script setup lang="ts">
-interface Props {
-  fallback?: string
-  showRetry?: boolean
-  showDetails?: boolean
-  onRetry?: () => void | Promise<void>
+interface ErrorProps {
+  error: {
+    statusCode: number
+    statusMessage?: string
+    message?: string
+    stack?: string
+    data?: any
+  }
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  fallback: 'An unexpected error occurred. Please try again.',
-  showRetry: true,
-  showDetails: false
-})
+const props = defineProps<ErrorProps>()
+
+// VueUse replacements for client-side checks
+const { $router } = useNuxtApp()
 
 // Error state
-const hasError = ref(false)
-const errorMessage = ref('')
-const errorDetails = ref('')
-const showDetailsState = ref(props.showDetails)
+const showDetails = ref(false)
 
-// Error boundary implementation
-const handleError = (error: Error, instance?: any, info?: string) => {
-  console.error('Error Boundary caught error:', error)
-  
-  hasError.value = true
-  errorMessage.value = error.message || props.fallback
-  errorDetails.value = `${error.stack}\n\nComponent Info: ${info || 'N/A'}`
-  
-  // Report error to monitoring service (mock)
-  reportError(error, { component: instance, info })
-}
+// Computed error information
+const errorTitle = computed(() => {
+  switch (props.error.statusCode) {
+    case 404:
+      return 'Page Not Found'
+    case 500:
+      return 'Server Error'
+    case 403:
+      return 'Access Forbidden'
+    default:
+      return 'Something went wrong'
+  }
+})
 
-// Mock error reporting
-const reportError = (error: Error, context: any) => {
-  // In a real app, this would send to error tracking service like Sentry
-  console.warn('Error reported:', {
-    message: error.message,
-    stack: error.stack,
-    context,
-    timestamp: new Date().toISOString(),
-    userAgent: navigator.userAgent,
-    url: window.location.href
-  })
-}
+const errorMessage = computed(() => {
+  if (props.error.statusCode === 404) {
+    return "The page you're looking for doesn't exist or has been moved."
+  }
+  
+  return props.error.statusMessage || 
+         props.error.message || 
+         'An unexpected error occurred. Please try again.'
+})
 
 // Actions
-const retry = async () => {
-  hasError.value = false
-  errorMessage.value = ''
-  errorDetails.value = ''
-  showDetailsState.value = props.showDetails
-  
-  if (props.onRetry) {
-    try {
-      await props.onRetry()
-    } catch (error) {
-      if (error instanceof Error) {
-        handleError(error)
-      }
+const handleError = () => {
+  if (props.error.statusCode === 404) {
+    goHome()
+  } else {
+    // For other errors, try to reload the page
+    if (process.client) {
+      window.location.reload()
+    } else {
+      goHome()
     }
   }
 }
 
 const goHome = () => {
-  navigateTo('/')
+  // Clear error and navigate to home
+  clearError({ redirect: '/' })
 }
 
 const toggleDetails = () => {
-  showDetailsState.value = !showDetailsState.value
+  showDetails.value = !showDetails.value
 }
 
-// Vue error handling
-onErrorCaptured((error, instance, info) => {
-  handleError(error, instance, info)
-  return false // Prevent error from propagating
-})
-
-// Global error handling for promises
-if (process.client) {
-  window.addEventListener('unhandledrejection', (event) => {
-    console.error('Unhandled promise rejection:', event.reason)
-    
-    const error = event.reason instanceof Error 
-      ? event.reason 
-      : new Error(String(event.reason))
-    
-    handleError(error, null, 'Unhandled Promise Rejection')
+// Report error to monitoring service (mock)
+const reportError = (error: any, context: any) => {
+  // In a real app, this would send to error tracking service like Sentry
+  console.warn('Error reported:', {
+    message: error.message,
+    statusCode: error.statusCode,
+    stack: error.stack,
+    context,
+    timestamp: new Date().toISOString(),
+    userAgent: process.client ? navigator.userAgent : 'Server',
+    url: process.client ? window.location.href : 'Server'
   })
 }
 
-// Computed
-const showDetails = computed(() => showDetailsState.value)
+// Report error on mount
+onMounted(() => {
+  reportError(props.error, {
+    component: 'error.vue',
+    timestamp: new Date().toISOString()
+  })
+})
 
-// Expose error state for testing
-defineExpose({
-  hasError,
-  errorMessage,
-  errorDetails,
-  handleError,
-  retry
+// Set proper page title and meta
+useHead({
+  title: computed(() => `${props.error.statusCode} - ${errorTitle.value}`),
+  meta: [
+    {
+      name: 'robots',
+      content: 'noindex, nofollow'
+    }
+  ]
 })
 </script>
 
 <style scoped>
-.error-boundary {
-  min-height: 400px;
+.error-page {
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: var(--n-space-m);
+  background: var(--n-color-surface);
 }
 
 .error-card {
@@ -237,7 +233,7 @@ defineExpose({
 }
 
 @media (max-width: 768px) {
-  .error-boundary {
+  .error-page {
     padding: var(--n-space-s);
   }
   

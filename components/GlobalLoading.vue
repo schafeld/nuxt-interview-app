@@ -17,6 +17,7 @@
 const { globalLoading, loadingMessage } = useGlobalLoading()
 
 // Prevent body scroll when loading overlay is visible
+// Only manipulate DOM on client side
 watchEffect(() => {
   if (process.client) {
     if (globalLoading.value) {

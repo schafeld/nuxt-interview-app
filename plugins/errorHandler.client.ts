@@ -1,25 +1,25 @@
 // plugins/errorHandler.client.ts
+import { useTimeoutFn } from '@vueuse/core'
+
 export default defineNuxtPlugin(() => {
   // Global error handler composable
   const useGlobalErrorHandler = () => {
     const isOnline = ref(true)
     const errors = ref<Array<{ id: string; message: string; timestamp: Date; type: string }>>([])
-    
-    // Check online status
-    if (process.client) {
-      isOnline.value = navigator.onLine
-      
-      window.addEventListener('online', () => {
-        isOnline.value = true
-        console.log('Network connection restored')
-      })
-      
-      window.addEventListener('offline', () => {
-        isOnline.value = false
-        console.warn('Network connection lost')
-        showNetworkError()
-      })
-    }
+
+    // Check online status (already client-side since this is a client plugin)
+    isOnline.value = navigator.onLine
+
+    window.addEventListener('online', () => {
+      isOnline.value = true
+      console.log('Network connection restored')
+    })
+
+    window.addEventListener('offline', () => {
+      isOnline.value = false
+      console.warn('Network connection lost')
+      showNetworkError()
+    })
 
     // Show network error notification
     const showNetworkError = () => {
@@ -34,14 +34,14 @@ export default defineNuxtPlugin(() => {
         timestamp: new Date(),
         type
       }
-      
+
       errors.value.push(error)
-      
-      // Auto-remove error after 5 seconds
-      setTimeout(() => {
+
+      // Auto-remove error after 5 seconds using VueUse
+      useTimeoutFn(() => {
         removeError(error.id)
-      }, 5000)
-      
+      }, 5000).start()
+
       return error.id
     }
 
@@ -67,12 +67,12 @@ export default defineNuxtPlugin(() => {
         return await operation()
       } catch (error) {
         console.error('Async operation failed:', error)
-        
+
         let message = errorMessage
         if (error instanceof Error) {
           message = error.message || errorMessage
         }
-        
+
         addError('async', message)
         return null
       }
@@ -81,12 +81,12 @@ export default defineNuxtPlugin(() => {
     // Handle form submission errors
     const handleFormError = (error: unknown, fallbackMessage = 'Form submission failed') => {
       console.error('Form error:', error)
-      
+
       let message = fallbackMessage
       if (error instanceof Error) {
         message = error.message || fallbackMessage
       }
-      
+
       return addError('form', message)
     }
 
@@ -108,37 +108,35 @@ export default defineNuxtPlugin(() => {
     }
   }
 
-  // Register global error handlers
-  if (process.client) {
-    // Handle unhandled promise rejections
-    window.addEventListener('unhandledrejection', (event) => {
-      console.error('Unhandled promise rejection:', event.reason)
-      
-      // Prevent default browser behavior (console error)
-      event.preventDefault()
-      
-      const { addError } = useGlobalErrorHandler()
-      addError('promise', 'An unexpected error occurred. Please refresh the page if problems persist.')
-    })
+  // Register global error handlers (already client-side since this is a client plugin)
+  // Handle unhandled promise rejections
+  window.addEventListener('unhandledrejection', (event) => {
+    console.error('Unhandled promise rejection:', event.reason)
 
-    // Handle JavaScript errors
-    window.addEventListener('error', (event) => {
-      console.error('JavaScript error:', event.error)
-      
-      const { addError } = useGlobalErrorHandler()
-      addError('javascript', 'A technical error occurred. Please refresh the page.')
-    })
+    // Prevent default browser behavior (console error)
+    event.preventDefault()
 
-    // Handle resource loading errors
-    window.addEventListener('error', (event) => {
-      if (event.target && event.target !== window) {
-        console.error('Resource loading error:', event.target)
-        
-        const { addError } = useGlobalErrorHandler()
-        addError('resource', 'Failed to load some resources. Please check your connection.')
-      }
-    }, true)
-  }
+    const { addError } = useGlobalErrorHandler()
+    addError('promise', 'An unexpected error occurred. Please refresh the page if problems persist.')
+  })
+
+  // Handle JavaScript errors
+  window.addEventListener('error', (event) => {
+    console.error('JavaScript error:', event.error)
+
+    const { addError } = useGlobalErrorHandler()
+    addError('javascript', 'A technical error occurred. Please refresh the page.')
+  })
+
+  // Handle resource loading errors
+  window.addEventListener('error', (event) => {
+    if (event.target && event.target !== window) {
+      console.error('Resource loading error:', event.target)
+
+      const { addError } = useGlobalErrorHandler()
+      addError('resource', 'Failed to load some resources. Please check your connection.')
+    }
+  }, true)
 
   // Provide global error handler
   return {

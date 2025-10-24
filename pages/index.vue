@@ -42,6 +42,7 @@
             :type="showPassword ? 'text' : 'password'"
             :value="form.password"
             @input="updatePassword"
+            @blur="handlePasswordBlur"
             :error="getFieldError('password')"
             label="Password"
             placeholder="Enter a secure password"
@@ -53,17 +54,16 @@
             <nord-icon slot="start" name="interface-lock" size="s" aria-hidden="true"></nord-icon>
             <nord-button
               slot="end"
-              variant="plain"
-              size="s"
               @click="togglePasswordVisibility"
               type="button"
-              :aria-pressed="showPassword"
               :aria-label="showPassword ? 'Hide password' : 'Show password'"
               :title="showPassword ? 'Hide password' : 'Show password'"
               class="password-toggle"
               ref="passwordToggleButton"
+              square
             >
-              <nord-icon :name="showPassword ? 'interface-edit-on' : 'interface-edit-off'" size="s"></nord-icon>
+              <nord-icon name="interface-edit-on" size="s"></nord-icon>
+              <nord-icon name="interface-edit-off" size="s"></nord-icon>
               <span class="visually-hidden">{{ showPassword ? 'Hide password' : 'Show password' }}</span>
             </nord-button>
           </nord-input>
@@ -180,7 +180,7 @@
 
         
         <!-- Error Messages -->
-        <div v-if="errors.length > 0" class="error-messages">
+        <div v-if="errors.length > 0" class="error-messages" role="alert" aria-live="assertive">
           <nord-banner variant="danger" class="error-banner">
             <div class="error-content">
               <div class="error-title">
@@ -257,6 +257,7 @@ const isSubmitting = ref(false)
 const errors = ref<ValidationError[]>([])
 const passwordToggleButton = ref<HTMLElement | null>(null)
 const emailTouched = ref(false)
+const passwordTouched = ref(false)
 const showResetModal = ref(false)
 
 // Composables
@@ -339,6 +340,10 @@ const updatePassword = (event: Event) => {
   clearFieldErrors('password')
 }
 
+const handlePasswordBlur = () => {
+  passwordTouched.value = true
+}
+
 const updateReceiveUpdates = (event: Event) => {
   const target = event.target as HTMLInputElement
   form.receiveUpdates = target.checked
@@ -349,6 +354,11 @@ const togglePasswordVisibility = () => {
 }
 
 const getFieldError = (fieldName: string): string => {
+  // For password field, only show errors if field has been touched
+  if (fieldName === 'password' && !passwordTouched.value) {
+    return ''
+  }
+  
   const fieldError = errors.value.find(error => error.field === fieldName)
   return fieldError ? fieldError.message : ''
 }
@@ -893,5 +903,29 @@ fieldset {
   opacity: 0.5;
 }
 
+/* Password toggle icon visibility based on input type */
+.password-input[type="password"] .password-toggle nord-icon[name="interface-edit-off"],
+.password-input[type="text"] .password-toggle nord-icon[name="interface-edit-on"] {
+  display: none;
+}
+
+/* Make password toggle button completely transparent - only show icon */
+/* Todo: The (inner?) button still seems to have an almost invisible box-shadow, get rid of that. */
+.password-toggle {
+  --n-button-border-color: transparent !important;
+  --n-button-border-width: 0 !important;
+  --n-button-background-color: transparent !important;
+  border: none !important;
+  border-left: 1px solid var(--n-color-border) !important;
+  background: transparent !important;
+  /* padding: var(--n-space-xs) !important; */
+  /* margin: var(--n-space-xs) !important; */
+  height: 20px !important;
+  width: 24px !important;
+  /* min-height: unset !important;
+  min-width: unset !important;
+  box-shadow: none !important;
+  outline: none !important; */
+}
 
 </style>

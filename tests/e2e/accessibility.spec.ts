@@ -1,7 +1,7 @@
 // tests/e2e/accessibility.spec.ts
 import { test, expect } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
-import { navigateAndWaitForComponents } from './utils/page-helpers'
+import { navigateAndWaitForComponents, waitForNordInputReady } from './utils/page-helpers'
 
 test.describe('Accessibility Tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -20,98 +20,108 @@ test.describe('Accessibility Tests', () => {
 
   test('signup page should not have accessibility violations', async ({ page }) => {
     await navigateAndWaitForComponents(page, '/')
-    
+
     const accessibilityScanResults = await new AxeBuilder({ page })
       .exclude('#nuxt-devtools-container')
       .exclude('nuxt-devtools-frame')
       .analyze()
-    
+
     expect(accessibilityScanResults.violations).toEqual([])
   })
 
   test('success page should not have accessibility violations', async ({ page }) => {
     await navigateAndWaitForComponents(page, '/')
-    
+
     // Fill out the form with valid data
     const emailInput = page.locator('nord-input').filter({ hasText: 'Email Address' }).locator('input')
     await emailInput.fill('test@example.com')
-    
+
     const passwordInput = page.locator('nord-input').filter({ hasText: 'Password' }).locator('input')
     await passwordInput.fill('SecurePassword123!@')
-    
+
     const checkbox = page.locator('nord-checkbox')
     await checkbox.click()
-    
+
     // Wait for form to be valid
     await page.waitForTimeout(1000)
-    
+
     // Submit form using the same programmatic approach as the working signup test
     const form = page.locator('form.signup-form')
     await form.evaluate(form => {
       const event = new Event('submit', { bubbles: true, cancelable: true })
       form.dispatchEvent(event)
     })
-    
+
     // Wait for navigation to success page
     await page.waitForURL('/success', { timeout: 10000 })
-    
+
     const accessibilityScanResults = await new AxeBuilder({ page })
       .exclude('#nuxt-devtools-container')
       .exclude('nuxt-devtools-frame')
       .analyze()
-    
+
     expect(accessibilityScanResults.violations).toEqual([])
   })
 
   test('profile page should not have accessibility violations', async ({ page }) => {
     // Navigate directly to profile page since signup flow is complex
     await navigateAndWaitForComponents(page, '/profile')
-    
+
     const accessibilityScanResults = await new AxeBuilder({ page })
       .exclude('#nuxt-devtools-container')
       .exclude('nuxt-devtools-frame')
       .analyze()
-    
+
     expect(accessibilityScanResults.violations).toEqual([])
   })
 
   test('skip link functionality', async ({ page }) => {
     await navigateAndWaitForComponents(page, '/')
-    
+
     // Focus on skip link and activate it
     const skipLink = page.locator('.skip-link')
     await skipLink.focus()
     await skipLink.click()
-    
+
     // Wait a moment for focus to move
     await page.waitForTimeout(100)
-    
+
     // For Webkit compatibility, just verify the skip link worked by checking:
     // 1. The skip link exists and is clickable
     // 2. The main content element exists and is properly configured
     // 3. At minimum, focus changed from the skip link
-    
+
     const mainContent = page.locator('#main-content')
     await expect(mainContent).toBeVisible()
     await expect(mainContent).toHaveAttribute('tabindex', '-1')
-    
+
     // Verify focus moved away from the skip link (basic functionality test)
     await expect(skipLink).not.toBeFocused()
   })
 
   test('form validation messages are announced to screen readers', async ({ page }) => {
     await navigateAndWaitForComponents(page, '/')
-    
-    // Submit empty form to trigger validation
+
+    // Fill out invalid data to trigger validation
+    const emailInput = await waitForNordInputReady(page, 'Email Address')
+    await emailInput.fill('invalid-email')
+
+    const passwordInput = await waitForNordInputReady(page, 'Password')
+    await passwordInput.fill('weak')
+
+    // Try to submit form to trigger validation
     await page.waitForSelector('nord-button[type="submit"]', { state: 'visible' })
     const submitButton = page.locator('nord-button[type="submit"]')
     await submitButton.click({ force: true })
-    
+
     // Wait for validation to trigger
-    await page.waitForTimeout(1000)
-    
-    // Check for error messages - there should be at least some validation
+    await page.waitForTimeout(2000)
+
+    // Check for error messages - should now be visible
     const errorMessages = page.locator('[role="alert"]')
     await expect(errorMessages.first()).toBeVisible()
+
+    // Verify aria-live attribute for screen reader announcements
+    await expect(errorMessages.first()).toHaveAttribute('aria-live', 'assertive')
   })
 })

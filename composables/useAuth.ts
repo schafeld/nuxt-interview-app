@@ -1,5 +1,6 @@
 // composables/useAuth.ts
 import { SignJWT, jwtVerify } from 'jose'
+import { useTimeoutFn } from '@vueuse/core'
 import type { SignupForm, StoredUser } from '~/types'
 
 interface UserData {
@@ -37,13 +38,13 @@ export const useAuth = () => {
         receiveUpdates: userData.receiveUpdates,
         timestamp: userData.timestamp
       }
-      
+
       const jwt = await new SignJWT(payload)
         .setProtectedHeader({ alg: 'HS256' })
         .setIssuedAt()
         .setExpirationTime(`${TOKEN_EXPIRY_HOURS}h`)
         .sign(JWT_SECRET)
-      
+
       return jwt
     } catch (error) {
       console.error('Error creating JWT token:', error)
@@ -55,7 +56,7 @@ export const useAuth = () => {
   const verifyToken = async (token: string): Promise<UserData | null> => {
     try {
       const { payload } = await jwtVerify(token, JWT_SECRET)
-      
+
       // Validate payload has required fields
       if (payload.id && payload.email && typeof payload.receiveUpdates === 'boolean' && payload.timestamp) {
         return {
@@ -65,7 +66,7 @@ export const useAuth = () => {
           timestamp: payload.timestamp as string
         }
       }
-      
+
       return null
     } catch (error) {
       console.error('Invalid token:', error)
@@ -76,7 +77,7 @@ export const useAuth = () => {
   // Helper function to get registered users from localStorage
   const getRegisteredUsers = (): StoredUser[] => {
     if (!process.client) return []
-    
+
     try {
       const storedUsers = localStorage.getItem('registeredUsers')
       if (storedUsers) {
@@ -96,7 +97,7 @@ export const useAuth = () => {
   // Helper function to save registered users to localStorage
   const saveRegisteredUsers = (users: StoredUser[]): void => {
     if (!process.client) return
-    
+
     try {
       localStorage.setItem('registeredUsers', JSON.stringify(users))
     } catch (error) {
@@ -113,7 +114,7 @@ export const useAuth = () => {
   // Remove user from registered users (for clear account data)
   const removeRegisteredUser = (email: string): void => {
     if (!process.client) return
-    
+
     const users = getRegisteredUsers()
     const filteredUsers = users.filter(user => user.email.toLowerCase() !== email.toLowerCase())
     saveRegisteredUsers(filteredUsers)
@@ -122,36 +123,36 @@ export const useAuth = () => {
   // Sign in existing user
   const signIn = async (email: string, password: string): Promise<{ success: boolean, error?: string }> => {
     state.loading = true
-    
+
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
+      // Simulate API call delay using VueUse
+      await new Promise(resolve => useTimeoutFn(resolve, 1000).start())
+
       const registeredUser = findRegisteredUser(email)
-      
+
       if (!registeredUser) {
         return { success: false, error: 'No account found with this email address.' }
       }
-      
+
       // Verify password using secure encryption (with fallback to old method)
       const { verifyPassword: verifySecurePassword, isSecureHash, migrateOldPassword } = useSecureEncryption()
       const { verifyPassword: verifyOldPassword } = useEncryption()
-      
+
       let passwordValid = false
-      
+
       if (isSecureHash(registeredUser.encryptedPassword)) {
         // Use new secure verification
         passwordValid = await verifySecurePassword(password, registeredUser.encryptedPassword)
       } else {
         // Use old verification and migrate
         passwordValid = verifyOldPassword(password, registeredUser.encryptedPassword)
-        
+
         if (passwordValid) {
           // Migrate password to secure format
           try {
             const newHash = await migrateOldPassword(password, registeredUser.encryptedPassword)
             registeredUser.encryptedPassword = newHash
-            
+
             // Update stored users with new hash
             const users = getRegisteredUsers()
             const userIndex = users.findIndex(u => u.email.toLowerCase() === email.toLowerCase())
@@ -165,11 +166,11 @@ export const useAuth = () => {
           }
         }
       }
-      
+
       if (!passwordValid) {
         return { success: false, error: 'Incorrect password. Please try again or request a password reset.' }
       }
-      
+
       const userData: UserData = {
         id: crypto.randomUUID(),
         email: registeredUser.email,
@@ -178,7 +179,7 @@ export const useAuth = () => {
       }
 
       const token = await createToken(userData)
-      
+
       // Store token securely (in production, use httpOnly cookies)
       if (process.client) {
         localStorage.setItem(TOKEN_KEY, token)
@@ -187,7 +188,7 @@ export const useAuth = () => {
       state.user = userData
       state.token = token
       state.isAuthenticated = true
-      
+
       return { success: true }
     } catch (error) {
       console.error('Sign in failed:', error)
@@ -200,17 +201,17 @@ export const useAuth = () => {
   // Register new user
   const register = async (formData: SignupForm): Promise<{ success: boolean, error?: string }> => {
     state.loading = true
-    
+
     try {
       // Check if user already exists
       const existingUser = findRegisteredUser(formData.email)
       if (existingUser) {
         return { success: false, error: 'An account with this email already exists.' }
       }
-      
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
+
+      // Simulate API call delay using VueUse
+      await new Promise(resolve => useTimeoutFn(resolve, 1000).start())
+
       // Encrypt password and store user using secure encryption
       const { hashPassword } = useSecureEncryption()
       const newUser: StoredUser = {
@@ -219,12 +220,12 @@ export const useAuth = () => {
         receiveUpdates: formData.receiveUpdates,
         timestamp: new Date().toISOString()
       }
-      
+
       // Save to localStorage
       const users = getRegisteredUsers()
       users.push(newUser)
       saveRegisteredUsers(users)
-      
+
       // Create user session
       const userData: UserData = {
         id: crypto.randomUUID(),
@@ -234,7 +235,7 @@ export const useAuth = () => {
       }
 
       const token = await createToken(userData)
-      
+
       if (process.client) {
         localStorage.setItem(TOKEN_KEY, token)
       }
@@ -242,7 +243,7 @@ export const useAuth = () => {
       state.user = userData
       state.token = token
       state.isAuthenticated = true
-      
+
       return { success: true }
     } catch (error) {
       console.error('Registration failed:', error)
@@ -263,11 +264,11 @@ export const useAuth = () => {
   // Logout user
   const logout = async (): Promise<void> => {
     state.loading = true
-    
+
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500))
-      
+      // Simulate API call using VueUse
+      await new Promise(resolve => useTimeoutFn(resolve, 500).start())
+
       if (process.client) {
         localStorage.removeItem(TOKEN_KEY)
         // Also clear any legacy session storage
@@ -292,7 +293,7 @@ export const useAuth = () => {
       // Remove user from registered users
       removeRegisteredUser(state.user.email)
     }
-    
+
     // Then logout
     await logout()
   }
@@ -304,11 +305,11 @@ export const useAuth = () => {
     }
 
     state.loading = true
-    
+
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 800))
-      
+      // Simulate API call using VueUse
+      await new Promise(resolve => useTimeoutFn(resolve, 800).start())
+
       const updatedUser: UserData = {
         ...state.user,
         receiveUpdates,
@@ -316,14 +317,14 @@ export const useAuth = () => {
       }
 
       const token = await createToken(updatedUser)
-      
+
       if (process.client) {
         localStorage.setItem(TOKEN_KEY, token)
-        
+
         // Also update the stored user data in registeredUsers
         const users = getRegisteredUsers()
         const userIndex = users.findIndex(user => user.email.toLowerCase() === state.user!.email.toLowerCase())
-        
+
         if (userIndex !== -1) {
           users[userIndex] = {
             ...users[userIndex],
@@ -349,15 +350,15 @@ export const useAuth = () => {
     if (!process.client) return
 
     state.loading = true
-    
+
     try {
       const storedToken = localStorage.getItem(TOKEN_KEY)
-      
+
       if (!storedToken) {
         // Check for legacy session storage and migrate
         const legacyCompleted = sessionStorage.getItem('signupCompleted')
         const legacyData = sessionStorage.getItem('signupData')
-        
+
         if (legacyCompleted && legacyData) {
           try {
             const userData = JSON.parse(legacyData)
@@ -367,30 +368,30 @@ export const useAuth = () => {
               receiveUpdates: userData.receiveUpdates || false,
               timestamp: userData.timestamp || new Date().toISOString()
             }
-            
+
             const token = await createToken(migratedUser)
             localStorage.setItem(TOKEN_KEY, token)
-            
+
             // Clean up legacy storage
             sessionStorage.removeItem('signupCompleted')
             sessionStorage.removeItem('signupData')
-            
+
             state.user = migratedUser
             state.token = token
             state.isAuthenticated = true
-            
+
             return
           } catch (error) {
             console.error('Failed to migrate legacy auth:', error)
           }
         }
-        
+
         state.isAuthenticated = false
         return
       }
 
       const userData = await verifyToken(storedToken)
-      
+
       if (userData) {
         state.user = userData
         state.token = storedToken
@@ -412,13 +413,13 @@ export const useAuth = () => {
   // Check if token is about to expire (within 1 hour)
   const isTokenExpiring = (): boolean => {
     if (!state.token) return false
-    
+
     try {
       const payload = JSON.parse(atob(state.token.split('.')[1]))
       const exp = payload.exp * 1000 // Convert to milliseconds
       const now = Date.now()
       const oneHour = 60 * 60 * 1000
-      
+
       return exp - now < oneHour
     } catch {
       return true // If we can't parse, assume it's expiring
@@ -430,11 +431,11 @@ export const useAuth = () => {
     if (state.isAuthenticated && state.user && isTokenExpiring()) {
       try {
         const newToken = await createToken(state.user)
-        
+
         if (process.client) {
           localStorage.setItem(TOKEN_KEY, newToken)
         }
-        
+
         state.token = newToken
       } catch (error) {
         console.error('Token refresh failed:', error)
@@ -446,7 +447,7 @@ export const useAuth = () => {
   return {
     // State
     ...toRefs(state),
-    
+
     // Methods
     login,
     signIn,
@@ -457,7 +458,7 @@ export const useAuth = () => {
     initializeAuth,
     refreshTokenIfNeeded,
     findRegisteredUser,
-    
+
     // Computed
     user: computed(() => state.user),
     isAuthenticated: computed(() => state.isAuthenticated),

@@ -1,4 +1,6 @@
 // composables/useAccessibility.ts
+import { useTimeoutFn } from '@vueuse/core'
+
 /**
  * Accessibility utilities and helpers for the application
  */
@@ -16,13 +18,15 @@ export const useAccessibility = () => {
       announcement.setAttribute('aria-atomic', 'true')
       announcement.className = 'visually-hidden'
       announcement.textContent = message
-      
+
       document.body.appendChild(announcement)
-      
-      // Remove after announcement
-      setTimeout(() => {
-        document.body.removeChild(announcement)
-      }, 1000)
+
+      // Remove after announcement using VueUse
+      useTimeoutFn(() => {
+        if (document.body.contains(announcement)) {
+          document.body.removeChild(announcement)
+        }
+      }, 1000).start()
     }
   }
 
@@ -33,21 +37,21 @@ export const useAccessibility = () => {
   const manageFocus = (element: HTMLElement | string) => {
     if (process.client) {
       let targetElement: HTMLElement | null = null
-      
+
       if (typeof element === 'string') {
         targetElement = document.querySelector(element)
       } else {
         targetElement = element
       }
-      
+
       if (targetElement) {
         // Ensure element is focusable
         if (!targetElement.hasAttribute('tabindex')) {
           targetElement.setAttribute('tabindex', '-1')
         }
-        
+
         targetElement.focus()
-        
+
         // Announce page change to screen readers
         const pageTitle = document.title
         announceToScreenReader(`Navigated to ${pageTitle}`)
@@ -69,33 +73,33 @@ export const useAccessibility = () => {
    */
   const validateAccessibility = (element: HTMLElement): string[] => {
     const issues: string[] = []
-    
+
     // Check for missing alt text on images
     if (element.tagName === 'IMG' && !element.getAttribute('alt')) {
       issues.push('Image missing alt attribute')
     }
-    
+
     // Check for form labels
     if (['INPUT', 'SELECT', 'TEXTAREA'].includes(element.tagName)) {
       const id = element.getAttribute('id')
       const ariaLabel = element.getAttribute('aria-label')
       const ariaLabelledBy = element.getAttribute('aria-labelledby')
-      
+
       if (!ariaLabel && !ariaLabelledBy && (!id || !document.querySelector(`label[for="${id}"]`))) {
         issues.push('Form element missing accessible label')
       }
     }
-    
+
     // Check for sufficient color contrast (basic check)
     const style = window.getComputedStyle(element)
     const bgColor = style.backgroundColor
     const textColor = style.color
-    
+
     if (bgColor && textColor && bgColor !== 'rgba(0, 0, 0, 0)') {
       // This is a simplified check - in production, use a proper contrast checker
       issues.push('Manual color contrast check recommended')
     }
-    
+
     return issues
   }
 
@@ -114,19 +118,19 @@ export const useAccessibility = () => {
   ) => {
     if (process.client) {
       let targetElements: HTMLElement[] = []
-      
+
       if (typeof elements === 'string') {
         targetElements = Array.from(document.querySelectorAll(elements))
       } else {
         targetElements = elements
       }
-      
+
       const { direction = 'both', wrap = true, homeEnd = true } = options
-      
+
       targetElements.forEach((element, index) => {
         element.addEventListener('keydown', (event) => {
           let nextIndex = index
-          
+
           switch (event.key) {
             case 'ArrowRight':
               if (direction === 'horizontal' || direction === 'both') {
@@ -165,7 +169,7 @@ export const useAccessibility = () => {
               }
               break
           }
-          
+
           if (nextIndex !== index) {
             targetElements[nextIndex].focus()
           }
